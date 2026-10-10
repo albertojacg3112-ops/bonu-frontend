@@ -3,62 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Bonü — Marketplace Premium con Cashback en Cada Compra</title>
-
-<!-- ===== SEO ===== -->
-<meta name="description" content="Compra en Bonü y gana hasta 20% de cashback. Miles de productos con envío a todo México. Compra 100% protegida.">
-<meta name="keywords" content="marketplace, compras online, cashback, envíos gratis, México, ofertas">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://xn--bon-joa.com/">
-
-<!-- ===== WhatsApp / Facebook ===== -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Bonü">
-<meta property="og:title" content="Bonü — Marketplace Premium con Cashback">
-<meta property="og:description" content="Hasta 20% de cashback en cada compra. Envío gratis +$999. Compra protegida.">
-<meta property="og:url" content="https://xn--bon-joa.com/">
-<meta property="og:image" content="https://xn--bon-joa.com/og-image.jpg">
-<meta property="og:locale" content="es_MX">
-
-<!-- ===== Twitter ===== -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Bonü — Marketplace Premium con Cashback">
-<meta name="twitter:description" content="Hasta 20% de cashback en cada compra.">
-<meta name="twitter:image" content="https://xn--bon-joa.com/og-image.jpg">
-
-<!-- ===== Iconos y PWA ===== -->
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<title>Bonü - Global Marketplace Enterprise</title>
+<meta name="description" content="Bonü Marketplace - El marketplace premium con cashback en cada compra">
 <meta name="theme-color" content="#facc15">
-
-<!-- ===== Velocidad (pre-conexión) ===== -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-<!-- ===== Google entiende qué es Bonü ===== -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "OnlineStore",
-  "name": "Bonü",
-  "url": "https://xn--bon-joa.com",
-  "logo": "https://xn--bon-joa.com/logo-bonu.png",
-  "description": "Marketplace premium con cashback en cada compra",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "2da de Iztacihuatl #20, Col. El Popo",
-    "addressLocality": "Atlixco",
-    "addressRegion": "Puebla",
-    "addressCountry": "MX"
-  },
-  "telephone": "+52 322 270 0732",
-  "email": "bonu.marketplace@gmail.com"
-}
-</script>
-
-<!-- ===== Librerías ===== -->
+<link rel="icon" type="image/png" href="favicon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <script src="https://js.stripe.com/v3/"></script>
@@ -68,7 +16,6 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
 :root{--primary:#facc15;--primary-dark:#eab308;--black:#0a0a0a;--dark:#111827;--gray:#6b7280;--white:#ffffff;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--shadow-sm:0 1px 2px 0 rgba(0,0,0,0.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1);--radius-sm:0.5rem;--radius-md:0.75rem;--radius-lg:1rem;--radius-xl:1.25rem;--radius-2xl:1.5rem;--font-sans:'DM Sans',sans-serif;--font-display:'Inter',sans-serif;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -235,6 +182,31 @@ button:active{transform:scale(0.97);}
 .stock-bajo-item:last-child{border-bottom:none;}
 .alert-pulse{animation:pulse 2s infinite;}
 @keyframes pulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
+/* ============================================
+   🎨 ADMIN PANEL PRO — v1 (Fase 1)
+   ============================================ */
+.admin-sidebar{background:linear-gradient(180deg,#0a0a0a 0%,#151b28 100%);width:280px;padding:0.75rem 0 1.5rem;display:flex;flex-direction:column;gap:0.125rem;overflow-y:auto;max-height:100%;flex-shrink:0;border-right:1px solid rgba(250,204,21,0.15);}
+.admin-sidebar::before{content:"★ BONÜ · ADMIN";display:block;font-family:var(--font-display);font-weight:800;font-size:1.05rem;color:var(--primary);letter-spacing:1px;padding:0.75rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:0.75rem;}
+.admin-nav-btn{display:flex;align-items:center;gap:0.75rem;padding:0.65rem 1.25rem;cursor:pointer;color:#9aa3b2;font-size:0.85rem;font-weight:500;width:100%;background:transparent;transition:all 0.15s;border:none;text-align:left;position:relative;}
+.admin-nav-btn:hover{background:rgba(255,255,255,0.05);color:#ffffff;}
+.admin-nav-btn.active{background:linear-gradient(90deg,rgba(250,204,21,0.16) 0%,rgba(250,204,21,0.04) 100%);color:var(--primary);font-weight:600;}
+.admin-nav-btn.active::before{content:"";position:absolute;left:0;top:15%;height:70%;width:3px;background:var(--primary);border-radius:0 3px 3px 0;}
+.admin-tab{display:none;padding:2rem 2.5rem;overflow-y:auto;flex:1;background:#f6f7f9;}
+.admin-tab.active{display:block;}
+.admin-tab :where(h2){font-size:1.35rem;font-weight:700;letter-spacing:-0.01em;}
+.stat-card{background:var(--white);border-radius:1rem;padding:1.25rem;box-shadow:0 1px 3px rgba(16,24,40,0.07);border:1px solid #edf0f4;transition:all 0.2s ease;}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(16,24,40,0.1);border-color:rgba(250,204,21,0.55);}
+.admin-tab table{width:100%;border-collapse:collapse;font-size:0.85rem;background:var(--white);border-radius:0.75rem;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,0.07);}
+.admin-tab th{background:var(--dark);color:var(--primary);padding:0.7rem 1rem;text-align:left;font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;}
+.admin-tab td{padding:0.7rem 1rem;border-bottom:1px solid #eef1f5;color:#374151;}
+.admin-tab tbody tr:hover td{background:#fffbeb;}
+.admin-tab :where(button){border-radius:0.6rem;font-weight:600;transition:all 0.15s;}
+.admin-tab :where(button):hover{transform:translateY(-1px);filter:brightness(1.05);}
+.admin-sidebar::-webkit-scrollbar{width:5px;}
+.admin-sidebar::-webkit-scrollbar-thumb{background:rgba(250,204,21,0.3);border-radius:3px;}
+.admin-sidebar::-webkit-scrollbar-track{background:transparent;}
+.admin-tab::-webkit-scrollbar{width:8px;}
+.admin-tab::-webkit-scrollbar-thumb{background:#d3d8de;border-radius:4px;}
 </style>
 </head>
 <body>
@@ -307,7 +279,7 @@ button:active{transform:scale(0.97);}
         <div class="cat-drop absolute top-full left-0 bg-white rounded-xl shadow-2xl p-4 min-w-[800px] z-50" style="display:none;">
           <div class="grid grid-cols-4 gap-2" id="cat-grid"></div>
           <div class="border-t border-gray-200 mt-3 pt-3">
-            <a href="#"agregar style="display:none;" class="block p-2 text-sm font-bold text-amber-700 hover:bg-yellow-50 rounded-lg transition"><i class="fa-solid fa-shield-halved mr-2"></i>Admin</a>
+            <a href="#" id="admin-cat-link" class="block p-2 text-sm font-bold text-amber-700 hover:bg-yellow-50 rounded-lg transition"><i class="fa-solid fa-shield-halved mr-2"></i>Admin</a>
           </div>
         </div>
       </div>
@@ -315,7 +287,7 @@ button:active{transform:scale(0.97);}
         <div class="relative">
           <input type="text" id="search-input" class="w-full bg-white text-black rounded-full py-2.5 px-5 text-sm outline-none focus:ring-2 focus:ring-[#facc15] pr-10" placeholder="Buscar productos..." autocomplete="off">
           <button id="search-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition"><i class="fa-solid fa-magnifying-glass"></i></button>
-          <div id="search-suggestions" class="absolute top-full left-0 right-0 bg-white rounded-xl shadow-xl z-50 max-h-60 overflow-y-auto hidden"></div>
+          <div id="search-suggestions" class="absolute top-full left-0 right-0 bg-white text-black rounded-xl shadow-xl z-50 max-h-60 overflow-y-auto hidden"></div>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -453,11 +425,11 @@ button:active{transform:scale(0.97);}
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
         <div><h3 class="font-bold text-[#facc15] mb-3 text-sm uppercase">CONÓCENOS</h3><ul class="space-y-2 text-sm"><li><a href="#" class="footer-link hover:text-[#facc15] transition">Acerca de Bonü</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Trabaja con Nosotros</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Blog</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Prensa</a></li></ul></div>
-        <div><h3 class="font-bold text-[#facc15] mb-3 text-sm uppercase">AYUDA</h3><ul class="space-y-2 text-sm"><li><a href="mailto:bonu.marketplace@gmail.com" class="footer-link hover:text-[#facc15] transition">bonu.marketplace@gmail.com</a></li><li><ahref="tel:" → href="tel:+523222700732" class="footer-link hover:text-[#facc15] transition">322 270 0732</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Centro de Ayuda</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Preguntas Frecuentes</a></li></ul></div>
+        <div><h3 class="font-bold text-[#facc15] mb-3 text-sm uppercase">AYUDA</h3><ul class="space-y-2 text-sm"><li><a href="mailto:bonu.marketplace@gmail.com" class="footer-link hover:text-[#facc15] transition">bonu.marketplace@gmail.com</a></li><li><a href="tel:+523222700732" class="footer-link hover:text-[#facc15] transition">322 270 0732</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Centro de Ayuda</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Preguntas Frecuentes</a></li></ul></div>
         <div><h3 class="font-bold text-[#facc15] mb-3 text-sm uppercase">POLÍTICAS</h3><ul class="space-y-2 text-sm"><li><a href="#" class="footer-link hover:text-[#facc15] transition">Políticas de envíos</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Políticas de Privacidad</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Políticas de Cookies</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Devoluciones</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Términos y Condiciones</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Políticas para Vendedores</a></li></ul></div>
         <div><h3 class="font-bold text-[#facc15] mb-3 text-sm uppercase">NEGOCIOS</h3><ul class="space-y-2 text-sm"><li><a href="#" class="footer-link hover:text-[#facc15] transition">Vendedores</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Afiliados</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Proveedores</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Ganar Dinero</a></li><li><a href="#" class="footer-link hover:text-[#facc15] transition">Alianzas Comerciales</a></li></ul></div>
       </div>
-      <div class="border-t border-gray-800 pt-6 text-center text-sm text-gray-500">© <script>document.write(new Date().getFullYear());</script> Bonü - Todos los Derechos Reservados</div>
+      <div class="border-t border-gray-800 pt-6 text-center text-sm text-gray-500">© 2007-2026 Bonü - Todos los Derechos Reservados</div>
     </div>
   </footer>
 </div>
@@ -1163,10 +1135,10 @@ const TRADUCCIONES = {
     'gratis': 'Gratis',
     'sku': 'SKU:',
     'descripcion': 'Descripción',
-    'resenas': 'Resenas',
+    'reseñas': 'Reseñas',
     'escribe_reseña': 'Escribe una reseña',
     'publicar': 'Publicar',
-    'sin_resenas': 'No hay resenas aún.',
+    'sin_reseñas': 'No hay reseñas aún.',
     'productos_relacionados': 'Productos relacionados',
     'total_a_pagar': 'Total a pagar',
     'subtotal': 'Subtotal',
@@ -1463,10 +1435,10 @@ const TRADUCCIONES = {
     'error_limpiar': 'Error al limpiar: {0}',
     'pdf_descargado': 'PDF descargado. Esta es la única descarga disponible.',
     'error_descargar_pdf': 'Error al descargar: {0}',
-    'inicia_sesion_para_reseñar': 'Inicia sesión para reseñar',
-    'escribe_reseña': 'Escribe tu opinión y selecciona una calificación',
-    'reseña_publicada': 'Reseña publicada',
-    'error_reseña': 'Error: {0}',
+    'inicia_sesion_para_resenar': 'Inicia sesión para reseñar',
+    'escribe_resena': 'Escribe tu opinión y selecciona una calificación',
+    'resena_publicada': 'Reseña publicada',
+    'error_resena': 'Error: {0}',
     'producto_agregado_favoritos': 'Agregado a favoritos',
     'producto_eliminado_favoritos': 'Eliminado de favoritos',
     'link_copiado': 'Link copiado al portapapeles',
@@ -1572,10 +1544,10 @@ const TRADUCCIONES = {
     'gratis': 'Free',
     'sku': 'SKU:',
     'descripcion': 'Description',
-    'resenas': 'Reviews',
-    'escribe_resena': 'Write a review',
+    'reseñas': 'Reviews',
+    'escribe_reseña': 'Write a review',
     'publicar': 'Post',
-    'sin_resenas': 'No reviews yet.',
+    'sin_reseñas': 'No reviews yet.',
     'productos_relacionados': 'Related products',
     'total_a_pagar': 'Total to pay',
     'subtotal': 'Subtotal',
@@ -1872,10 +1844,10 @@ const TRADUCCIONES = {
     'error_limpiar': 'Error cleaning: {0}',
     'pdf_descargado': 'PDF downloaded. This is the only download available.',
     'error_descargar_pdf': 'Error downloading: {0}',
-    'inicia_sesion_para_reseñar': 'Log in to review',
-    'escribe_reseña': 'Write your opinion and select a rating',
-    'reseña_publicada': 'Review published',
-    'error_reseña': 'Error: {0}',
+    'inicia_sesion_para_resenar': 'Log in to review',
+    'escribe_resena': 'Write your opinion and select a rating',
+    'resena_publicada': 'Review published',
+    'error_resena': 'Error: {0}',
     'producto_agregado_favoritos': 'Added to favorites',
     'producto_eliminado_favoritos': 'Removed from favorites',
     'link_copiado': 'Link copied to clipboard',
@@ -1981,10 +1953,10 @@ const TRADUCCIONES = {
     'gratis': 'Kostenlos',
     'sku': 'SKU:',
     'descripcion': 'Beschreibung',
-    'resenas': 'Bewertungen',
+    'reseñas': 'Bewertungen',
     'escribe_reseña': 'Eine Bewertung schreiben',
     'publicar': 'Veröffentlichen',
-    'sin_resenas': 'Noch keine Bewertungen.',
+    'sin_reseñas': 'Noch keine Bewertungen.',
     'productos_relacionados': 'Ähnliche Produkte',
     'total_a_pagar': 'Gesamtbetrag',
     'subtotal': 'Zwischensumme',
@@ -2281,10 +2253,10 @@ const TRADUCCIONES = {
     'error_limpiar': 'Fehler beim Bereinigen: {0}',
     'pdf_descargado': 'PDF heruntergeladen. Dies ist der einzige verfügbare Download.',
     'error_descargar_pdf': 'Fehler beim Herunterladen: {0}',
-    'inicia_sesion_para_reseñar': 'Melden Sie sich an, um zu bewerten',
-    'escribe_reseña': 'Schreiben Sie Ihre Meinung und wählen Sie eine Bewertung',
-    'reseña_publicada': 'Bewertung veröffentlicht',
-    'error_reseña': 'Fehler: {0}',
+    'inicia_sesion_para_resenar': 'Melden Sie sich an, um zu bewerten',
+    'escribe_resena': 'Schreiben Sie Ihre Meinung und wählen Sie eine Bewertung',
+    'resena_publicada': 'Bewertung veröffentlicht',
+    'error_resena': 'Fehler: {0}',
     'producto_agregado_favoritos': 'Zu Favoriten hinzugefügt',
     'producto_eliminado_favoritos': 'Von Favoriten entfernt',
     'link_copiado': 'Link in die Zwischenablage kopiert',
@@ -2390,10 +2362,10 @@ const TRADUCCIONES = {
     'gratis': 'Grátis',
     'sku': 'SKU:',
     'descripcion': 'Descrição',
-    'resenas': 'Avaliações',
-    'escribe_resena': 'Escreva uma avaliação',
+    'reseñas': 'Avaliações',
+    'escribe_reseña': 'Escreva uma avaliação',
     'publicar': 'Publicar',
-    'sin_resenas': 'Ainda não há avaliações.',
+    'sin_reseñas': 'Ainda não há avaliações.',
     'productos_relacionados': 'Produtos relacionados',
     'total_a_pagar': 'Total a pagar',
     'subtotal': 'Subtotal',
@@ -2690,10 +2662,10 @@ const TRADUCCIONES = {
     'error_limpiar': 'Erro ao limpar: {0}',
     'pdf_descargado': 'PDF baixado. Este é o único download disponível.',
     'error_descargar_pdf': 'Erro ao baixar: {0}',
-    'inicia_sesion_para_reseñar': 'Faça login para avaliar',
-    'escribe_reseña': 'Escreva sua opinião e selecione uma avaliação',
-    'reseña_publicada': 'Avaliação publicada',
-    'error_reseña': 'Erro: {0}',
+    'inicia_sesion_para_resenar': 'Faça login para avaliar',
+    'escribe_resena': 'Escreva sua opinião e selecione uma avaliação',
+    'resena_publicada': 'Avaliação publicada',
+    'error_resena': 'Erro: {0}',
     'producto_agregado_favoritos': 'Adicionado aos favoritos',
     'producto_eliminado_favoritos': 'Removido dos favoritos',
     'link_copiado': 'Link copiado para a área de transferência',
@@ -2799,10 +2771,10 @@ const TRADUCCIONES = {
     'gratis': 'مجاناً',
     'sku': 'SKU:',
     'descripcion': 'الوصف',
-    'resenas': 'التقييمات',
-    'escribe_resena': 'اكتب تقييماً',
+    'reseñas': 'التقييمات',
+    'escribe_reseña': 'اكتب تقييماً',
     'publicar': 'نشر',
-    'sin_resenas': 'لا توجد تقييمات حتى الآن.',
+    'sin_reseñas': 'لا توجد تقييمات حتى الآن.',
     'productos_relacionados': 'منتجات ذات صلة',
     'total_a_pagar': 'المبلغ الإجمالي',
     'subtotal': 'المجموع الفرعي',
@@ -3099,10 +3071,10 @@ const TRADUCCIONES = {
     'error_limpiar': 'خطأ في المسح: {0}',
     'pdf_descargado': 'تم تنزيل PDF. هذا هو التنزيل الوحيد المتاح.',
     'error_descargar_pdf': 'خطأ في التنزيل: {0}',
-    'inicia_sesion_para_reseñar': 'سجل الدخول لتقييم',
-    'escribe_reseña': 'اكتب رأيك واختر تقييماً',
-    'reseña_publicada': 'تم نشر التقييم',
-    'error_reseña': 'خطأ: {0}',
+    'inicia_sesion_para_resenar': 'سجل الدخول لتقييم',
+    'escribe_resena': 'اكتب رأيك واختر تقييماً',
+    'resena_publicada': 'تم نشر التقييم',
+    'error_resena': 'خطأ: {0}',
     'producto_agregado_favoritos': 'تمت الإضافة إلى المفضلة',
     'producto_eliminado_favoritos': 'تمت الإزالة من المفضلة',
     'link_copiado': 'تم نسخ الرابط إلى الحافظة',
@@ -4147,7 +4119,7 @@ window.openPP = async function(id) {
   
   const stars = Array.from({ length: 5 }, (_, i) => `<i class="fa-${i < Math.round(p.rating || 4) ? 'solid' : 'regular'} fa-star"></i>`).join('');
   document.getElementById('pp-stars').innerHTML = stars;
-  document.getElementById('pp-rating-text').innerHTML = `${(p.rating || 4).toFixed(1)} (${p.reviewCount || 0} resenas)`;
+  document.getElementById('pp-rating-text').innerHTML = `${(p.rating || 4).toFixed(1)} (${p.reviewCount || 0} reseñas)`;
   const imgs = p.imagenes?.length ? p.imagenes : [`https://picsum.photos/seed/${p.id}/500/500`];
   const thumbs = document.getElementById('pp-thumbs');
   if(thumbs) {
@@ -4216,7 +4188,7 @@ window.openPP = async function(id) {
     if(!currentUser) reviewsToShow = allReviews.filter(r => r.rating >= 4).slice(0, 3);
     else reviewsToShow = allReviews.slice(0, 10);
     const reviewsList = document.getElementById('pp-reviews-list');
-    if(reviewsList) reviewsList.innerHTML = reviewsToShow.length ? reviewsToShow.map(r => `<div class="review-item"><div class="stars">${Array.from({ length: 5 }, (_, i) => `<i class="fa-${i < r.rating ? 'solid' : 'regular'} fa-star"></i>`).join('')}</div><p class="text-sm">${escapeHtml(r.comentario)}</p><span class="user">${escapeHtml(r.usuarioNombre)}</span> <span class="date">${new Date(r.fecha).toLocaleDateString()}</span> ${r.verificado ? '✅ Verificado' : ''}</div>`).join('') : '<p class="text-gray-400 text-center py-4">No hay resenas aún.</p>';
+    if(reviewsList) reviewsList.innerHTML = reviewsToShow.length ? reviewsToShow.map(r => `<div class="review-item"><div class="stars">${Array.from({ length: 5 }, (_, i) => `<i class="fa-${i < r.rating ? 'solid' : 'regular'} fa-star"></i>`).join('')}</div><p class="text-sm">${escapeHtml(r.comentario)}</p><span class="user">${escapeHtml(r.usuarioNombre)}</span> <span class="date">${new Date(r.fecha).toLocaleDateString()}</span> ${r.verificado ? '✅ Verificado' : ''}</div>`).join('') : '<p class="text-gray-400 text-center py-4">No hay reseñas aún.</p>';
   } catch(e) { console.error(e); }
   const related = productos.filter(x => x.categoria === p.categoria && x.id !== p.id).slice(0, 12);
   initRelatedSlider(related);
@@ -6140,7 +6112,7 @@ document.getElementById('search-input')?.addEventListener('input', (e) => {
     const suggestionsDiv = document.getElementById('search-suggestions');
     if(suggestionsDiv) {
       if(suggestions.length) {
-        suggestionsDiv.innerHTML = suggestions.map(p => `<div class="p-2 hover:bg-yellow-50 cursor-pointer text-sm" onclick="window.doSearch('${p.nombre.replace(/'/g, "\\'")}'); document.getElementById('search-suggestions').classList.add('hidden');">${escapeHtml(p.nombre)}</div>`).join('');
+        suggestionsDiv.innerHTML = suggestions.map(p => `<div class="p-2 hover:bg-yellow-50 cursor-pointer text-sm text-black" onclick="window.doSearch('${p.nombre.replace(/'/g, "\\'")}'); document.getElementById('search-suggestions').classList.add('hidden');">${escapeHtml(p.nombre)}</div>`).join('');
         suggestionsDiv.classList.remove('hidden');
       } else suggestionsDiv.classList.add('hidden');
     }
@@ -6230,7 +6202,40 @@ async function doAdminLogin() {
 document.getElementById('adm-login-btn')?.addEventListener('click', doAdminLogin);
 document.getElementById('adm-email')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') doAdminLogin(); });
 document.getElementById('adm-pass')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') doAdminLogin(); });
-
+// =====================================================================
+// 🎯 TABS ADMIN — cambio de pestañas (restaurado)
+// =====================================================================
+document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('.admin-nav-btn');
+  if(!btn || !btn.dataset.tab) return;
+  document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const tab = document.querySelector('.admin-tab[data-tab="' + btn.dataset.tab + '"]');
+  if(tab) tab.classList.add('active');
+});
+// =====================================================================
+// 🛡️ AUTO-REPARADOR BOTÓN ADMIN v3 (dentro del dropdown, sin duplicados)
+// =====================================================================
+function repararBotonAdmin(){
+  if(document.getElementById('admin-cat-link')) return;
+  const drop = document.querySelector('.cat-drop');
+  const grid = document.getElementById('cat-grid');
+  const destino = drop || grid;
+  if(!destino) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'border-t border-gray-200 mt-3 pt-3';
+  wrap.innerHTML = '<a href="#" id="admin-cat-link" class="block p-2 text-sm font-bold text-amber-700 hover:bg-yellow-50 rounded-lg transition"><i class="fa-solid fa-shield-halved mr-2"></i>Admin</a>';
+  destino.appendChild(wrap);
+  wrap.querySelector('a').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('login-modal').classList.remove('hidden');
+  });
+}
+repararBotonAdmin();
+const _catGrid = document.getElementById('cat-grid');
+if(_catGrid) new MutationObserver(repararBotonAdmin).observe(_catGrid, {childList:true});
+setInterval(repararBotonAdmin, 5000);
 // =====================================================================
 // AUTH STATE
 // =====================================================================
@@ -6481,7 +6486,7 @@ document.getElementById('export-dashboard-pdf')?.addEventListener('click', funct
   if(win) {
     win.document.write(`
       <html><head><title>Dashboard Bonü</title>
-      <style>body{font-family:Arial;padding:20px;background:#fff;} .stat-card{background:#f8f9fa;padding:15px;border-radius:8px;margin:5px;} canvas{max-width:100%;} table{width:100%;border-collapse:collapse;} th,td{border:1px solid #ddd;padding:8px;text-align:left;} th{background:#facc15;}</style>
+      <style>body{font-family:Arial;padding:20px;background:#fff;} .stat-card{background:#f8f9fa;padding:15px;border-radius:8px;margin:5px;} canvas{max-width:100%;} table{width:100%;border-collapse:collapse;} th,td{border:1px solid #ddd;padding:8px;text-align:left;} th{background:#facc15;} #search-suggestions, #search-suggestions *{color:#111827 !important;}</style>
       </head><body>
       <div style="text-align:center;margin-bottom:20px;">
         <h1 style="color:#facc15;">⭐ Bonü</h1>
@@ -6602,12 +6607,21 @@ window.addEventListener('load', async () => {
   }
   document.addEventListener('click', (e) => { if(cookieBanner && cookieBanner.style.display === 'flex' && !cookieBanner.contains(e.target)) { localStorage.setItem('cookiesAccepted', 'true'); cookieBanner.style.display = 'none'; } });
   document.getElementById('acceptCookies')?.addEventListener('click', (e) => { e.stopPropagation(); localStorage.setItem('cookiesAccepted', 'true'); cookieBanner.style.display = 'none'; });
-  console.log('%c✅ Bonü Marketplace v26.0 - ADMIN MEJORADO CON TODAS LAS FUNCIONALIDADES', 'color:#facc15;font-size:16px;background:#000;padding:12px;border-radius:12px;font-weight:bold;');
+console.log('%c✅ Bonü Marketplace v26.0 - ADMIN MEJORADO CON TODAS LAS FUNCIONALIDADES', 'color:#facc15;font-size:16px;background:#000;padding:12px;border-radius:12px;font-weight:bold;');
 });
 function handleProductUrl() { const path = window.location.pathname; const match = path.match(/\/producto\/(.+)/); if(match && match[1]) { const productId = match[1]; const urlParams = new URLSearchParams(window.location.search); if(urlParams.has('ref') && urlParams.get('ref') === 'compartido') { const splash = document.createElement('div'); splash.className = 'splash-screen'; splash.innerHTML = `<div class="logo">Bonü</div><div class="sub">Global Marketplace Enterprise</div><div class="timer">3</div><div class="text-sm mt-4">Redirigiendo...</div>`; document.body.appendChild(splash); let count = 3; const timer = setInterval(() => { count--; const timerDiv = splash.querySelector('.timer'); if(timerDiv) timerDiv.textContent = count; if(count <= 0) { clearInterval(timer); setTimeout(() => { splash.remove(); window.location.href = window.location.pathname; }, 100); } }, 1000); } else { const checkInterval = setInterval(() => { if(productos.length > 0) { clearInterval(checkInterval); const product = productos.find(p => String(p.id) === String(productId)); if(product) window.openPP(product.id); else toast('Producto no encontrado', 'err'); } }, 200); } } }
 document.getElementById('backToHomeBtn')?.addEventListener('click', () => { showHomeAndHideOthers(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 document.getElementById('logo-home')?.addEventListener('click', () => { showHomeAndHideOthers(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 document.getElementById('logo-home-product-page')?.addEventListener('click', () => { showHomeAndHideOthers(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+/* ============================================
+   🖱️ SCROLLBARS VISIBLES — ADMIN
+   ============================================ */
+.admin-sidebar::-webkit-scrollbar{width:10px;}
+.admin-sidebar::-webkit-scrollbar-thumb{background:rgba(250,204,21,0.75);border-radius:5px;}
+.admin-sidebar::-webkit-scrollbar-track{background:rgba(255,255,255,0.08);}
+.admin-tab::-webkit-scrollbar{width:12px;}
+.admin-tab::-webkit-scrollbar-thumb{background:#9ca3af;border-radius:6px;border:2px solid #f6f7f9;}
+.admin-tab::-webkit-scrollbar-track{background:#e5e7eb;}
 </script>
 </body>
 </html>
