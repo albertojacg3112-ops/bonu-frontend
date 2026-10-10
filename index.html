@@ -207,6 +207,18 @@ button:active{transform:scale(0.97);}
 .admin-sidebar::-webkit-scrollbar-track{background:transparent;}
 .admin-tab::-webkit-scrollbar{width:8px;}
 .admin-tab::-webkit-scrollbar-thumb{background:#d3d8de;border-radius:4px;}
+/* ===== SECCIONES SIDEBAR ADMIN — FASE 2 ===== */
+.admin-section-title{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:#9ca3af;
+  padding:12px 10px 2px 10px;
+  margin-top:6px;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.admin-section-title:first-child{ margin-top:0; border-top:none; padding-top:4px; }
 </style>
 </head>
 <body>
@@ -501,29 +513,34 @@ button:active{transform:scale(0.97);}
   <div class="admin-panel">
     <div class="admin-sidebar">
       <div class="logo-font text-2xl font-bold text-[#facc15] mb-8">Bonü Admin</div>
-      <nav class="flex flex-col gap-1">
+            <nav class="flex flex-col gap-1">
+        <div class="admin-section-title">📊 General</div>
         <button class="admin-nav-btn active" data-tab="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+        <button class="admin-nav-btn" data-tab="reportes"><i class="fa-solid fa-file-alt"></i> Reportes</button>
+        <div class="admin-section-title">📦 Catálogo</div>
         <button class="admin-nav-btn" data-tab="productos"><i class="fa-solid fa-box"></i> Productos</button>
+        <button class="admin-nav-btn" data-tab="importar"><i class="fa-solid fa-file-excel"></i> Importar Excel</button>
+        <button class="admin-nav-btn" data-tab="mayoreo"><i class="fa-solid fa-wholesale"></i> Mayoreo B2B</button>
+        <div class="admin-section-title">🛒 Ventas</div>
         <button class="admin-nav-btn" data-tab="ordenes"><i class="fa-solid fa-truck"></i> Órdenes</button>
+        <button class="admin-nav-btn" data-tab="devoluciones"><i class="fa-solid fa-rotate-left"></i> Devoluciones</button>
+        <button class="admin-nav-btn" data-tab="transacciones"><i class="fa-solid fa-credit-card"></i> Transacciones</button>
+        <div class="admin-section-title">👥 Usuarios</div>
         <button class="admin-nav-btn" data-tab="usuarios"><i class="fa-solid fa-users"></i> Usuarios</button>
         <button class="admin-nav-btn" data-tab="vendedores"><i class="fa-solid fa-store"></i> Vendedores</button>
-        <button class="admin-nav-btn" data-tab="cupones"><i class="fa-solid fa-ticket"></i> Cupones</button>
-        <button class="admin-nav-btn" data-tab="transacciones"><i class="fa-solid fa-credit-card"></i> Transacciones</button>
-        <button class="admin-nav-btn" data-tab="editor"><i class="fa-solid fa-pen"></i> Editor</button>
         <button class="admin-nav-btn" data-tab="comisiones"><i class="fa-solid fa-percent"></i> Comisiones</button>
-        <button class="admin-nav-btn" data-tab="mayoreo"><i class="fa-solid fa-wholesale"></i> Mayoreo B2B</button>
+        <div class="admin-section-title">📣 Marketing</div>
         <button class="admin-nav-btn" data-tab="banners"><i class="fa-solid fa-image"></i> Banners</button>
-        <button class="admin-nav-btn" data-tab="sister-stores"><i class="fa-solid fa-shop"></i> Tiendas Hermanas</button>
-        <button class="admin-nav-btn" data-tab="devoluciones"><i class="fa-solid fa-rotate-left"></i> Devoluciones</button>
-        <button class="admin-nav-btn" data-tab="importar"><i class="fa-solid fa-file-excel"></i> Importar Excel</button>
         <button class="admin-nav-btn" data-tab="hero-slider"><i class="fa-solid fa-images"></i> Hero Slider</button>
+        <button class="admin-nav-btn" data-tab="cupones"><i class="fa-solid fa-ticket"></i> Cupones</button>
         <button class="admin-nav-btn" data-tab="campanas-email"><i class="fa-solid fa-envelope"></i> Campañas Email</button>
-        <button class="admin-nav-btn" data-tab="libros-digitales"><i class="fa-solid fa-book"></i> Libros Digitales</button>
         <button class="admin-nav-btn" data-tab="campanas-whatsapp"><i class="fa-brands fa-whatsapp"></i> Campañas WhatsApp</button>
-        <!-- NUEVAS PESTAÑAS -->
+        <div class="admin-section-title">🏦 Sistema</div>
+        <button class="admin-nav-btn" data-tab="sister-stores"><i class="fa-solid fa-shop"></i> Tiendas Hermanas</button>
+        <button class="admin-nav-btn" data-tab="editor"><i class="fa-solid fa-pen"></i> Editor</button>
+        <button class="admin-nav-btn" data-tab="libros-digitales"><i class="fa-solid fa-book"></i> Libros Digitales</button>
         <button class="admin-nav-btn" data-tab="finanzas"><i class="fa-solid fa-coins"></i> Finanzas</button>
         <button class="admin-nav-btn" data-tab="auditoria"><i class="fa-solid fa-clipboard-list"></i> Auditoría</button>
-        <button class="admin-nav-btn" data-tab="reportes"><i class="fa-solid fa-file-alt"></i> Reportes</button>
       </nav>
       <div class="mt-auto pt-4 border-t border-gray-700">
         <button id="close-admin-btn" class="admin-nav-btn text-red-400 hover:text-red-300 w-full"><i class="fa-solid fa-sign-out-alt"></i> Cerrar Panel</button>
