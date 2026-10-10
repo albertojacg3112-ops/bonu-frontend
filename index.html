@@ -6220,7 +6220,7 @@ document.getElementById('adm-login-btn')?.addEventListener('click', doAdminLogin
 document.getElementById('adm-email')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') doAdminLogin(); });
 document.getElementById('adm-pass')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') doAdminLogin(); });
 // =====================================================================
-// 🎯 TABS ADMIN — cambio de pestañas (restaurado)
+// 🎯 TABS ADMIN — cambio de pestañas (FIX: busca por id tab-XXX)
 // =====================================================================
 document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
   const btn = e.target.closest('.admin-nav-btn');
@@ -6228,7 +6228,8 @@ document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
   document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  const tab = document.querySelector('.admin-tab[data-tab="' + btn.dataset.tab + '"]');
+  let tab = document.getElementById('tab-' + btn.dataset.tab);
+  if(!tab) tab = document.querySelector('.admin-tab[data-tab="' + btn.dataset.tab + '"]');
   if(tab) tab.classList.add('active');
 });
 // =====================================================================
