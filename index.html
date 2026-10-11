@@ -5564,40 +5564,36 @@ document.getElementById('btn-subir-propio')?.addEventListener('click', function(
   document.getElementById('p-sku').value = '';
   toast('Modo: Producto propio');
 });
+// 🌐 IMPORTACIÓN REAL DE PROVEEDORES (AliExpress API real)
 document.getElementById('btn-importar-proveedor')?.addEventListener('click', async function() {
-  const sku = document.getElementById('prov-sku')?.value.trim();
-  if (!sku) { toast('Ingresa el SKU del producto en el proveedor', 'warn'); return; }
-  if (!currentProveedorMode || currentProveedorMode === 'otro') {
-    toast('Selecciona un proveedor específico (CJ, TVCmall, SunSky)', 'warn');
-    return;
-  }
+  const raw = document.getElementById('prov-sku')?.value.trim();
+  if (!raw) { toast('Pega la URL o el ID del producto de AliExpress', 'warn'); return; }
+  const esAli = raw.toLowerCase().includes('aliexpress') || /^\d{6,}$/.test(raw);
+  if (!esAli) { toast('Por ahora solo está conectado AliExpress. Pega una URL de producto de AliExpress (o su ID numérico).', 'warn'); return; }
   showLoading(true);
   document.getElementById('import-loading').classList.remove('hidden');
   try {
-    const mockData = {
-      nombre: `Producto desde ${currentProveedorMode.toUpperCase()}`,
-      descripcion: 'Importado desde proveedor externo. Verificar disponibilidad y precios.',
-      precioProveedor: 150.00,
-      precioUnitario: 299.00,
-      precio6: 1500.00,
-      stock: 50,
-      imagenes: ['https://picsum.photos/seed/prov/400/400']
-    };
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    document.getElementById('p-nombre').value = mockData.nombre || '';
-    document.getElementById('p-desc').value = mockData.descripcion || '';
-    document.getElementById('p-precio-proveedor').value = mockData.precioProveedor || '';
-    document.getElementById('p-precio-unitario').value = mockData.precioUnitario || '';
-    document.getElementById('p-precio-6').value = mockData.precio6 || '';
-    document.getElementById('p-stock').value = mockData.stock || 0;
-    if (mockData.imagenes && mockData.imagenes.length) {
-      imgUrlsPropio = [];
-      imgUrlsPropio.push(...mockData.imagenes);
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) throw new Error('Sesión admin no encontrada. Vuelve a iniciar sesión.');
+    const response = await fetch(`${API_URL}/api/admin/aliexpress/producto?id=${encodeURIComponent(raw)}`, {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + idToken }
+    });
+    const data = await response.json();
+    if (!data.success) throw new Error(data.error || 'Error del servidor');
+    const p = data.data;
+    document.getElementById('p-nombre').value = p.nombre || '';
+    document.getElementById('p-desc').value = String(p.descripcion || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2000);
+    document.getElementById('p-precio-proveedor').value = p.precio || '';
+    document.getElementById('p-stock').value = p.stock || '';
+    document.getElementById('p-proveedor').value = 'AliExpress';
+    if (p.imagenes && p.imagenes.length) {
+      imgUrlsPropio = p.imagenes.slice(0, 30);
       addImagenesPrevia(imgUrlsPropio, document.getElementById('prev-imgs-propio'));
     }
-    toast('✅ Datos importados del proveedor correctamente');
+    toast('✅ Importado de AliExpress. Define precio 1 pieza y precio 6, luego sube.');
   } catch (e) {
-    toast('Error al importar: ' + e.message, 'err');
+    toast('Error: ' + e.message, 'err');
     console.error(e);
   }
   document.getElementById('import-loading').classList.add('hidden');
