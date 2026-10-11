@@ -1036,7 +1036,7 @@ button:active{transform:scale(0.97);}
 // =====================================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, getDoc, setDoc, writeBatch, increment, onSnapshot, limit } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, getDoc, setDoc, writeBatch, increment, onSnapshot, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
 const FB_CONFIG = { apiKey: "AIzaSyDtD_yOJgAJ5LvsIU-0zB5gEBiVJWsq7bE", authDomain: "bonumktp.firebaseapp.com", projectId: "bonumktp", storageBucket: "bonumktp.firebasestorage.app", messagingSenderId: "605171578462", appId: "1:605171578462:web:17a8078d5c843046a226cf", measurementId: "G-JM9DDYH4C6" };
@@ -5367,6 +5367,53 @@ document.getElementById('btn-importar-proveedor')?.addEventListener('click', asy
   document.getElementById('import-loading').classList.add('hidden');
   showLoading(false);
 });
+// 🏷️ GENERADOR SKU AUTOMÁTICO BONÜ
+// =====================================================================
+const SKU_PREFIJOS = {
+  'Ropa de hombre': 'RH', 'Accesorios para hombre': 'AH', 'Ropa de mujer': 'RM',
+  'Accesorios de mujer': 'AM', 'Bolsas': 'BO', 'General': 'GE', 'Tecnología': 'TE',
+  'Ropa de niños': 'RN', 'Joyería y relojes': 'JR', 'Calzado de mujer': 'CM',
+  'Calzado de hombre': 'CH', 'Ropa de gym': 'RG', 'Celulares y Accesorios': 'CE',
+  'Hogar y jardín': 'HJ', 'Gadgets y bocinas': 'GB', 'Juguetes': 'JU',
+  'Tablets y laptops': 'TA', 'Consolas y videojuegos': 'CV', 'Lentes y gorras': 'LG',
+  'Belleza y maquillajes': 'BE', 'Electrodomésticos': 'ED', 'Accesorios para auto': 'AU',
+  'Herramientas': 'HE', 'Libros y cursos': 'LI'
+};
+const SKU_SUBTIPOS = {
+  'Celulares y Accesorios': [['motorola','M'],['galaxy','G'],['samsung','G'],['iphone','I'],['xiaomi','X'],['huawei','H']],
+  'Belleza y maquillajes': [['plancha','P'],['secadora','S']],
+  'Tecnología': [['lámpara','L'],['lampara','L'],['computadora','C'],['laptop','C']]
+};
+const SKU_LIBROS = {
+  'alimentacion':'AL','salud':'SA','finanzas':'FI','historias':'HI','novelas':'NO',
+  'motivacion':'MO','desarrollo-personal':'DP','cocina':'CO','superacion-personal':'SP',
+  'tecnico':'TC','curso':'CU','guia':'GU','manual':'MA','leyenda':'LE','tecnologia':'TL',
+  'inteligencia-artificial':'IA','negocios':'NE','ninos':'NI','mujer':'MU','emprendimiento':'EM'
+};
+async function generarSkuBonu(categoria, nombreProducto = '', libroCategoria = '') {
+  let prefijo;
+  if (libroCategoria && SKU_LIBROS[libroCategoria]) {
+    prefijo = 'BL' + SKU_LIBROS[libroCategoria];
+  } else {
+    prefijo = SKU_PREFIJOS[categoria] || 'GE';
+    const subtipos = SKU_SUBTIPOS[categoria];
+    if (subtipos && nombreProducto) {
+      const nom = nombreProducto.toLowerCase();
+      for (const [palabra, letra] of subtipos) {
+        if (nom.includes(palabra)) { prefijo = prefijo + letra; break; }
+      }
+    }
+  }
+  const ref = doc(db, 'contadoresSku', prefijo);
+  const nuevoNumero = await runTransaction(db, async (t) => {
+    const snap = await t.get(ref);
+    const actual = snap.exists() ? (snap.data().ultimo || 0) : 0;
+    const siguiente = actual + 1;
+    t.set(ref, { ultimo: siguiente }, { merge: true });
+    return siguiente;
+  });
+  return prefijo + String(nuevoNumero).padStart(10, '0');
+}
 document.getElementById('btn-submit-producto')?.addEventListener('click', async function() {
   const nombre = document.getElementById('p-nombre')?.value.trim();
   const precioUnitario = parseFloat(document.getElementById('p-precio-unitario')?.value);
@@ -5405,6 +5452,10 @@ document.getElementById('btn-submit-producto')?.addEventListener('click', async 
   const colores = getSelectedVariants('colores-options');
   showLoading(true);
   try {
+ let skuFinal = sku;
+    if (!skuFinal) {
+      skuFinal = await generarSkuBonu(categoria, nombre);
+    }
     const nuevoProducto = {
       nombre,
       precioFinal: precioUnitario,
@@ -5427,7 +5478,7 @@ document.getElementById('btn-submit-producto')?.addEventListener('click', async 
       numeros,
       edades,
       colores,
-      sku: sku || '',
+      sku: skuFinal,
       pdfUrl: pdfUrlGlobal || null,
       descargas: 0,
       rating: 0,
