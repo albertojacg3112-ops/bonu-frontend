@@ -5295,7 +5295,243 @@ document.getElementById('p-pdf-file')?.addEventListener('change', async function
   }
   showLoading(false);
 });
+// 📚 LIBROS DIGITALES — formulario completo v1
+// =====================================================================
+let lbPortadaUrl = '';
+let lbPdfUrl = '';
+let lbEditingId = null;
+let lbLibrosCache = [];
 
+async function subirArchivoImgBB(file, statusEl, msgOk) {
+  showLoading(true);
+  if (statusEl) statusEl.textContent = 'Subiendo a ImgBB...';
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('key', IMGBB_API_KEY);
+    const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`ImgBB error: ${response.status} - ${errorText}`);
+    }
+    const data = await response.json();
+    if (!data.success) throw new Error(data.error?.message || 'Error desconocido');
+    if (statusEl) statusEl.innerHTML = msgOk;
+    return data.data.url;
+  } catch (error) {
+    console.error('Error subiendo archivo:', error);
+    toast('Error al subir: ' + error.message, 'err');
+    if (statusEl) statusEl.textContent = '❌ Error al subir';
+    return null;
+  } finally {
+    showLoading(false);
+  }
+}
+
+document.getElementById('lb-portada-file')?.addEventListener('change', async function() {
+  if (!this.files || this.files.length === 0) return;
+  const url = await subirArchivoImgBB(this.files[0], null, '');
+  if (url) {
+    lbPortadaUrl = url;
+    const pv = document.getElementById('lb-portada-preview');
+    if (pv) { pv.src = url; pv.classList.remove('hidden'); }
+    toast('✅ Portada subida correctamente');
+  }
+});
+
+document.getElementById('lb-pdf-file')?.addEventListener('change', async function() {
+  if (!this.files || this.files.length === 0) return;
+  const file = this.files[0];
+  if (file.type !== 'application/pdf') { toast('Solo se permiten archivos PDF', 'warn'); this.value = ''; return; }
+  const statusEl = document.getElementById('lb-pdf-status');
+  const url = await subirArchivoImgBB(file, statusEl, '✅ PDF subido correctamente');
+  if (url) { lbPdfUrl = url; toast('✅ PDF listo. Se guardará con el libro.'); }
+});
+
+function limpiarFormularioLibro() {
+  document.getElementById('lb-nombre').value = '';
+  document.getElementById('lb-precio').value = '';
+  document.getElementById('lb-categoria').value = '';
+  document.getElementById('lb-desc').value = '';
+  document.getElementById('lb-portada-file').value = '';
+  document.getElementById('lb-portada-url').value = '';
+  const pv = document.getElementById('lb-portada-preview');
+  if (pv) { pv.src = ''; pv.classList.add('hidden'); }
+  document.getElementById('lb-pdf-file').value = '';
+  const st = document.getElementById('lb-pdf-status');
+  if (st) st.textContent = 'Ningún archivo seleccionado';
+  lbPortadaUrl = '';
+  lbPdfUrl = '';
+}
+
+function resetearModoLibro() {
+  lbEditingId = null;
+  const t = document.getElementById('lb-form-titulo');
+  if (t) t.textContent = '➕ Subir nuevo libro';
+  const b = document.getElementById('btn-guardar-libro');
+  if (b) b.textContent = '💾 Guardar libro';
+  const c = document.getElementById('btn-cancelar-edicion-libro');
+  if (c) c.classList.add('hidden');
+}
+
+document.getElementById('btn-cancelar-edicion-libro')?.addEventListener('click', function() {
+  limpiarFormularioLibro();
+  resetearModoLibro();
+});
+
+document.getElementById('btn-guardar-libro')?.addEventListener('click', async function() {
+  const nombre = document.getElementById('lb-nombre')?.value.trim();
+  const precio = parseFloat(document.getElementById('lb-precio')?.value);
+  const categoria = document.getElementById('lb-categoria')?.value;
+  const descripcion = document.getElementById('lb-desc')?.value || '';
+  const portadaUrlInput = document.getElementById('lb-portada-url')?.value.trim() || '';
+  if (!nombre) { toast('El nombre del libro es obligatorio', 'warn'); return; }
+  if (isNaN(precio) || precio <= 0) { toast('Ingresa un precio válido', 'warn'); return; }
+  if (!categoria) { toast('Selecciona una categoría del libro', 'warn'); return; }
+  if (!lbPdfUrl) { toast('Sube el archivo PDF del libro', 'warn'); return; }
+  const original = lbEditingId ? lbLibrosCache.find(x => x.id === lbEditingId) : null;
+  const portadaFinal = lbPortadaUrl || portadaUrlInput || original?.imagenes?.[0] || '';
+  if (!portadaFinal) { toast('Sube la portada o pega su URL', 'warn'); return; }
+  showLoading(true);
+  try {
+    if (lbEditingId) {
+      await updateDoc(doc(db, 'productos', lbEditingId), {
+        nombre,
+        precioFinal: precio,
+        precio6: precio * 6,
+        descripcion,
+        categoria: 'Libros y cursos',
+        libroCategoria: categoria,
+        imagenes: [portadaFinal],
+        pdfUrl: lbPdfUrl,
+        fechaActualizacion: new Date().toISOString()
+      });
+      agregarLogAuditoria('Edición de libro', `Libro "${nombre}" actualizado`);
+      toast('✅ Libro actualizado');
+    } else {
+      const skuFinal = await generarSkuBonu('', '', categoria);
+      const nuevoLibro = {
+        nombre,
+        precioFinal: precio,
+        precioOriginal: precio * 1.2,
+        precio6: precio * 6,
+        precioProveedor: 0,
+        stock: 9999,
+        descuento: 0,
+        categoria: 'Libros y cursos',
+        libroCategoria: categoria,
+        tipo: 'Especiales',
+        proveedor: 'Bonü',
+        costoEnvio: 0,
+        tasaIVA: 16,
+        cashbackEnabled: true,
+        descripcion,
+        imagenes: [portadaFinal],
+        sku: skuFinal,
+        pdfUrl: lbPdfUrl,
+        descargas: 0,
+        rating: 0,
+        reviewCount: 0,
+        fechaSubida: new Date().toISOString(),
+        vendedorId: currentUser?.uid || 'admin'
+      };
+      await addDoc(collection(db, 'productos'), nuevoLibro);
+      agregarLogAuditoria('Creación de libro', `Libro "${nombre}" creado (SKU ${skuFinal})`);
+      toast('✅ Libro guardado con SKU ' + skuFinal);
+    }
+    limpiarFormularioLibro();
+    resetearModoLibro();
+    await cargarLibrosAdmin();
+    await loadProducts();
+    if (isAdmin) cargarEditorAdmin();
+  } catch (e) {
+    toast('Error al guardar libro: ' + e.message, 'err');
+    console.error(e);
+  }
+  showLoading(false);
+});
+
+async function cargarLibrosAdmin() {
+  const tbody = document.getElementById('tabla-libros-digitales');
+  if (!tbody) return;
+  try {
+    const q = query(collection(db, 'productos'), where('categoria', '==', 'Libros y cursos'));
+    const snap = await getDocs(q);
+    lbLibrosCache = [];
+    snap.forEach(d => lbLibrosCache.push({ id: d.id, ...d.data() }));
+    lbLibrosCache.sort((a, b) => (b.fechaSubida || '').localeCompare(a.fechaSubida || ''));
+    if (!lbLibrosCache.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-gray-400">Aún no hay libros. Sube el primero con el formulario de arriba.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = lbLibrosCache.map(l => `
+      <tr class="border-b">
+        <td class="py-2">${l.imagenes?.[0] ? `<img src="${l.imagenes[0]}" class="w-10 h-10 object-cover rounded inline-block mr-2 align-middle">` : ''}<strong>${l.nombre || ''}</strong><br><span class="text-xs text-gray-500">${l.sku || 'sin SKU'} · $${(l.precioFinal || 0).toFixed(2)}</span></td>
+        <td>${l.pdfUrl ? `<a href="${l.pdfUrl}" target="_blank" class="text-blue-600 underline text-xs">Ver PDF</a>` : '<span class="text-xs text-red-500">Sin PDF</span>'}</td>
+        <td>${l.descargas || 0}</td>
+        <td>
+          <button class="lb-edit-btn bg-amber-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-amber-600 transition" data-id="${l.id}">✏️ Editar</button>
+          <button class="lb-del-btn bg-red-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-red-600 transition" data-id="${l.id}" data-nombre="${(l.nombre || '').replace(/"/g, '&quot;')}">🗑️</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-red-500">Error al cargar libros</td></tr>';
+  }
+}
+
+document.getElementById('tabla-libros-digitales')?.addEventListener('click', async function(e) {
+  const editBtn = e.target.closest('.lb-edit-btn');
+  const delBtn = e.target.closest('.lb-del-btn');
+  if (!editBtn && !delBtn) return;
+  e.stopPropagation();
+  if (editBtn) {
+    const libro = lbLibrosCache.find(x => x.id === editBtn.dataset.id);
+    if (!libro) return;
+    lbEditingId = libro.id;
+    lbPortadaUrl = '';
+    lbPdfUrl = libro.pdfUrl || '';
+    document.getElementById('lb-nombre').value = libro.nombre || '';
+    document.getElementById('lb-precio').value = libro.precioFinal || '';
+    document.getElementById('lb-categoria').value = libro.libroCategoria || '';
+    document.getElementById('lb-desc').value = libro.descripcion || '';
+    document.getElementById('lb-portada-file').value = '';
+    const pv = document.getElementById('lb-portada-preview');
+    if (pv && libro.imagenes?.[0]) { pv.src = libro.imagenes[0]; pv.classList.remove('hidden'); }
+    const st = document.getElementById('lb-pdf-status');
+    if (st) st.textContent = libro.pdfUrl ? '✅ PDF actual (sube uno nuevo para reemplazar)' : 'Sin PDF';
+    const t = document.getElementById('lb-form-titulo');
+    if (t) t.textContent = '✏️ Editando: ' + (libro.nombre || '');
+    const b = document.getElementById('btn-guardar-libro');
+    if (b) b.textContent = '💾 Guardar cambios';
+    const c = document.getElementById('btn-cancelar-edicion-libro');
+    if (c) c.classList.remove('hidden');
+    window.scrollTo(0, 0);
+    const form = document.getElementById('lb-form-titulo');
+    if (form) form.scrollIntoView({ behavior: 'smooth' });
+  }
+  if (delBtn) {
+    if (!confirm('¿Eliminar el libro "' + delBtn.dataset.nombre + '"?')) return;
+    showLoading(true);
+    try {
+      await deleteDoc(doc(db, 'productos', delBtn.dataset.id));
+      agregarLogAuditoria('Eliminación de libro', `Libro "${delBtn.dataset.nombre}" eliminado`);
+      toast('🗑️ Libro eliminado');
+      await cargarLibrosAdmin();
+      await loadProducts();
+      if (isAdmin) cargarEditorAdmin();
+    } catch (err) {
+      toast('Error al eliminar: ' + err.message, 'err');
+    }
+    showLoading(false);
+  }
+});
+
+cargarLibrosAdmin();
+document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
+  if (e.target.closest('.admin-nav-btn')?.dataset.tab === 'libros-digitales') cargarLibrosAdmin();
+});
 // =====================================================================
 // FUNCIONES DE SUBIDA, EDICIÓN Y PROVEEDORES
 // =====================================================================
@@ -5328,40 +5564,36 @@ document.getElementById('btn-subir-propio')?.addEventListener('click', function(
   document.getElementById('p-sku').value = '';
   toast('Modo: Producto propio');
 });
+// 🌐 IMPORTACIÓN REAL DE PROVEEDORES (AliExpress API real)
 document.getElementById('btn-importar-proveedor')?.addEventListener('click', async function() {
-  const sku = document.getElementById('prov-sku')?.value.trim();
-  if (!sku) { toast('Ingresa el SKU del producto en el proveedor', 'warn'); return; }
-  if (!currentProveedorMode || currentProveedorMode === 'otro') {
-    toast('Selecciona un proveedor específico (CJ, TVCmall, SunSky)', 'warn');
-    return;
-  }
+  const raw = document.getElementById('prov-sku')?.value.trim();
+  if (!raw) { toast('Pega la URL o el ID del producto de AliExpress', 'warn'); return; }
+  const esAli = raw.toLowerCase().includes('aliexpress') || /^\d{6,}$/.test(raw);
+  if (!esAli) { toast('Por ahora solo está conectado AliExpress. Pega una URL de producto de AliExpress (o su ID numérico).', 'warn'); return; }
   showLoading(true);
   document.getElementById('import-loading').classList.remove('hidden');
   try {
-    const mockData = {
-      nombre: `Producto desde ${currentProveedorMode.toUpperCase()}`,
-      descripcion: 'Importado desde proveedor externo. Verificar disponibilidad y precios.',
-      precioProveedor: 150.00,
-      precioUnitario: 299.00,
-      precio6: 1500.00,
-      stock: 50,
-      imagenes: ['https://picsum.photos/seed/prov/400/400']
-    };
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    document.getElementById('p-nombre').value = mockData.nombre || '';
-    document.getElementById('p-desc').value = mockData.descripcion || '';
-    document.getElementById('p-precio-proveedor').value = mockData.precioProveedor || '';
-    document.getElementById('p-precio-unitario').value = mockData.precioUnitario || '';
-    document.getElementById('p-precio-6').value = mockData.precio6 || '';
-    document.getElementById('p-stock').value = mockData.stock || 0;
-    if (mockData.imagenes && mockData.imagenes.length) {
-      imgUrlsPropio = [];
-      imgUrlsPropio.push(...mockData.imagenes);
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) throw new Error('Sesión admin no encontrada. Vuelve a iniciar sesión.');
+    const response = await fetch(`${API_URL}/api/admin/aliexpress/producto?id=${encodeURIComponent(raw)}`, {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + idToken }
+    });
+    const data = await response.json();
+    if (!data.success) throw new Error(data.error || 'Error del servidor');
+    const p = data.data;
+    document.getElementById('p-nombre').value = p.nombre || '';
+    document.getElementById('p-desc').value = String(p.descripcion || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2000);
+    document.getElementById('p-precio-proveedor').value = p.precio || '';
+    document.getElementById('p-stock').value = p.stock || '';
+    document.getElementById('p-proveedor').value = 'AliExpress';
+    if (p.imagenes && p.imagenes.length) {
+      imgUrlsPropio = p.imagenes.slice(0, 30);
       addImagenesPrevia(imgUrlsPropio, document.getElementById('prev-imgs-propio'));
     }
-    toast('✅ Datos importados del proveedor correctamente');
+    toast('✅ Importado de AliExpress. Define precio 1 pieza y precio 6, luego sube.');
   } catch (e) {
-    toast('Error al importar: ' + e.message, 'err');
+    toast('Error: ' + e.message, 'err');
     console.error(e);
   }
   document.getElementById('import-loading').classList.add('hidden');
