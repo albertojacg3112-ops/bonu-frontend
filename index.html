@@ -650,9 +650,10 @@ button:active{transform:scale(0.97);}
               <input type="file" id="file-input-producto" accept="image/*" multiple style="display:none;">
             </div>
             <div id="prev-imgs-propio" class="img-preview-wrap"></div>
-            <div id="proveedor-fields" style="display:none;"><hr class="my-3"><h3 class="font-bold text-purple-700 mb-2">Datos específicos del proveedor</h3><input id="prov-sku" placeholder="SKU del producto *" class="form-input mb-2"><input id="prov-nombre" placeholder="Nombre del proveedor (si es otro)" class="form-input hidden"><button id="btn-importar-proveedor" class="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-600 transition w-full mb-2">📥 Cargar datos desde proveedor</button><div id="import-loading" class="text-center hidden"><i class="fa-solid fa-spinner fa-spin"></i> Importando...</div></div>
+            <div id="proveedor-fields" style="display:none;"><hr class="my-3"><h3 class="font-bold text-purple-700 mb-2">Datos específicos del proveedor</h3><input id="prov-sku" placeholder="URL o ID del producto de AliExpress *" class="form-input mb-2"><input id="prov-nombre" placeholder="Nombre del proveedor (si es otro)" class="form-input hidden"><button id="btn-importar-proveedor" class="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-600 transition w-full mb-2">📥 Cargar datos desde proveedor</button><div id="import-loading" class="text-center hidden"><i class="fa-solid fa-spinner fa-spin"></i> Importando...</div></div>
             <button id="btn-submit-producto" class="w-full bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 transition">Subir producto</button>
-          </div>
+         <button id="btn-ae-token" class="bg-gray-800 text-white px-4 py-2 rounded-xl text-sm hover:bg-gray-700 transition w-full mb-2">🔑 Conectar token AliExpress (una sola vez)</button>
+        </div>
         </div>
       </div>
       <!-- ===== TAB - ÓRDENES ===== -->
@@ -1027,6 +1028,24 @@ button:active{transform:scale(0.97);}
 <div id="search-page" class="hidden fixed inset-0 bg-white z-[5000] overflow-y-auto"><div class="sticky top-0 bg-black text-white p-3 flex items-center gap-4"><button id="sp-back" class="text-white hover:text-[#facc15] transition"><i class="fa-solid fa-arrow-left"></i> Volver</button><span class="logo-font font-bold text-xl text-[#facc15]">Bonü</span><input type="text" id="sp-input" class="flex-1 bg-zinc-800 text-white rounded-full py-2 px-4 text-sm outline-none focus:ring-2 focus:ring-[#facc15]" placeholder="Buscar..."></div><div class="max-w-7xl mx-auto p-6"><h2 id="sp-title" class="text-2xl font-bold mb-4">Resultados</h2><div id="sp-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div></div></div>
 <div class="loading-overlay" id="loading-overlay"><div class="spinner"></div><p class="text-white mt-3">Procesando...</p></div>
 <div id="toast" class="toast"></div>
+<!-- MODAL TOKEN ALIEXPRESS -->
+<div class="overlay hidden" id="ae-token-modal">
+  <div class="modal-box relative max-w-lg">
+    <button class="close-modal-x" onclick="document.getElementById('ae-token-modal').classList.add('hidden')">&times;</button>
+    <div class="p-6 space-y-3">
+      <h2 class="text-xl font-bold">🔑 Token AliExpress</h2>
+      <div id="ae-token-estado" class="text-sm text-gray-600">Cargando...</div>
+      <div class="border-t pt-3 space-y-2">
+        <p class="text-sm"><strong>Paso 1:</strong> Abre la autorización e inicia sesión con tu cuenta AliExpress:</p>
+        <button id="ae-abrir-autorizacion" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-700 transition">1️⃣ Abrir autorización</button>
+        <p class="text-sm"><strong>Paso 2:</strong> Al autorizar, verás en la barra de direcciones <code>?code=XXXXX</code>. Copia TODO lo que está después de <code>code=</code> y pégalo aquí:</p>
+        <input type="text" id="ae-code-input" placeholder="3_552496_xxxxxxxx..." class="form-input">
+        <button id="ae-canjear-btn" class="bg-green-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-green-700 transition w-full">2️⃣ Canjear y guardar token</button>
+        <p class="text-xs text-gray-400">⏱️ El code dura 3 minutos: haz los pasos sin pausa. Si da error, repite (se genera uno nuevo).</p>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="wa-bubble fixed bottom-6 right-6 z-[10000] cursor-pointer" id="wa-btn"><div class="w-14 h-14 bg-[#25d366] rounded-full flex items-center justify-center shadow-lg border-2 border-black hover:scale-105 transition"><i class="fa-brands fa-whatsapp text-white text-2xl"></i></div></div>
 <div class="back-to-home" id="backToHomeBtn"><i class="fa-solid fa-home"></i> Volver al inicio</div>
 <div id="cookieBanner" class="cookie-banner" style="display:none;"><span>🍪 Este sitio utiliza cookies para mejorar tu experiencia.</span><button id="acceptCookies">Aceptar</button></div>
@@ -5597,6 +5616,52 @@ document.getElementById('btn-importar-proveedor')?.addEventListener('click', asy
     console.error(e);
   }
   document.getElementById('import-loading').classList.add('hidden');
+  showLoading(false);
+});
+// 🔑 TOKEN ALIEXPRESS — panel de canje v1
+async function aeCargarEstado() {
+  const el = document.getElementById('ae-token-estado');
+  try {
+    const idToken = await auth.currentUser?.getIdToken();
+    const r = await fetch(`${API_URL}/api/admin/aliexpress/token/estado`, { headers: { 'Authorization': 'Bearer ' + idToken } });
+    const d = await r.json();
+    if (d.hayTokenFirestore) {
+      el.innerHTML = `✅ Token activo · canjeado hace ${d.diasDesde} día(s) · auto-renovación: ${d.autoRenovacion ? 'activa' : 'no disponible'}`;
+    } else {
+      el.innerHTML = '⚠️ Sin token guardado en el sistema. Usa los pasos de abajo para conectar.';
+    }
+    window.aeAutorizarUrl = d.autorizarUrl;
+  } catch(e) {
+    el.textContent = 'No pude leer el estado: ' + e.message;
+  }
+}
+document.getElementById('btn-ae-token')?.addEventListener('click', () => {
+  document.getElementById('ae-token-modal').classList.remove('hidden');
+  aeCargarEstado();
+});
+document.getElementById('ae-abrir-autorizacion')?.addEventListener('click', () => {
+  if (window.aeAutorizarUrl) window.open(window.aeAutorizarUrl, '_blank');
+  else toast('Espera a que cargue el estado del token', 'warn');
+});
+document.getElementById('ae-canjear-btn')?.addEventListener('click', async () => {
+  const code = document.getElementById('ae-code-input').value.trim();
+  if (!code) { toast('Pega el code que apareció en la URL', 'warn'); return; }
+  showLoading(true);
+  try {
+    const idToken = await auth.currentUser?.getIdToken();
+    const r = await fetch(`${API_URL}/api/admin/aliexpress/token/canjear`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ code })
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error);
+    toast('✅ ' + d.message);
+    document.getElementById('ae-code-input').value = '';
+    document.getElementById('ae-token-modal').classList.add('hidden');
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  }
   showLoading(false);
 });
 // 🏷️ GENERADOR SKU AUTOMÁTICO BONÜ
