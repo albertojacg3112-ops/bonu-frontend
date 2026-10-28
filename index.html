@@ -7016,6 +7016,48 @@ document.getElementById('logo-home')?.addEventListener('click', () => { showHome
 document.getElementById('logo-home-product-page')?.addEventListener('click', () => { showHomeAndHideOthers(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
 // ============================================================
+// BOTÓN AGREGAR HERO SLIDE - CONEXIÓN DIRECTA A FIREBASE
+// ============================================================
+document.getElementById('add-hero-slide')?.addEventListener('click', async function() {
+    const url = document.getElementById('hero-img-url')?.value.trim();
+    if (!url) {
+        toast('Escribe o pega una URL de imagen primero', 'warn');
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        // 1. Traemos Firebase directo
+        const { doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js");
+        
+        // 2. Buscamos los slides actuales en la base de datos
+        const docRef = doc(db, 'config', 'heroSlides');
+        const docSnap = await getDoc(docRef);
+        let slides = [];
+        if (docSnap.exists() && docSnap.data().slides) {
+            slides = docSnap.data().slides;
+        }
+        
+        // 3. Agregamos el nuevo
+        slides.push({ imageUrl: url, duration: 4 });
+        
+        // 4. Guardamos en la base de datos
+        await setDoc(docRef, { slides: slides, updatedAt: new Date().toISOString() }, { merge: true });
+        
+        toast('✅ Slide agregado y guardado');
+        document.getElementById('hero-img-url').value = '';
+        
+        // Recargamos para que se vea
+        setTimeout(() => window.location.reload(), 1000);
+        
+    } catch (error) {
+        console.error("❌ Error:", error);
+        toast('Error al guardar: ' + error.message, 'err');
+    }
+    showLoading(false);
+});
+// ============================================================
+// ============================================================
 // CONEXIONES DE BOTONES (HERO Y BANNERS)
 // ============================================================
 
