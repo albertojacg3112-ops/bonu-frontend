@@ -6990,6 +6990,68 @@ document.getElementById('logo-home')?.addEventListener('click', () => { showHome
 document.getElementById('logo-home-product-page')?.addEventListener('click', () => { showHomeAndHideOthers(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
 // ============================================================
+// CONEXIONES DE BOTONES (HERO Y BANNERS)
+// ============================================================
+
+// 1. GUARDAR HERO SLIDES
+document.getElementById('save-hero-slides')?.addEventListener('click', async function() {
+    const lista = document.getElementById('hero-slides-list');
+    if (typeof saveHeroSlides === 'function') {
+        await saveHeroSlides();
+        toast('✅ Slides guardados en Firebase');
+    } else {
+        toast('Error: La función saveHeroSlides no existe', 'err');
+    }
+});
+
+// 2. AGREGAR HERO SLIDE
+document.getElementById('add-hero-slide')?.addEventListener('click', async function() {
+    const url = document.getElementById('hero-img-url')?.value.trim();
+    const duration = parseInt(document.getElementById('hero-img-duration')?.value) || 4;
+    
+    if (!url) { 
+        toast('Pega la URL de la imagen primero', 'warn'); 
+        return; 
+    }
+    
+    try {
+        if (typeof heroSlides !== 'undefined') {
+            heroSlides.push({ imageUrl: url, duration: duration });
+            if (typeof saveHeroSlides === 'function') {
+                await saveHeroSlides();
+                toast('✅ Slide agregado y guardado');
+                document.getElementById('hero-img-url').value = '';
+            }
+        } else {
+            toast('Error: variable heroSlides no encontrada', 'err');
+        }
+    } catch(e) {
+        toast('Error al guardar slide: ' + e.message, 'err');
+    }
+});
+
+// 3. GUARDAR BANNER
+document.getElementById('guardar-banner')?.addEventListener('click', async function() {
+    const url = document.getElementById('banner-url')?.value.trim();
+    if (!url) { toast('Pega la URL de la imagen', 'warn'); return; }
+    
+    try {
+        if (typeof banners !== 'undefined' && typeof saveBanners === 'function') {
+            banners.push({ imagen: url, duracion: 3, ubicacion: 'home', activo: true });
+            await saveBanners();
+            toast('✅ Banner guardado correctamente');
+            document.getElementById('banner-url').value = '';
+        } else {
+            toast('Error: variables de banners no encontradas', 'err');
+        }
+    } catch(e) {
+        toast('Error al guardar banner: ' + e.message, 'err');
+    }
+});
+
+console.log('✅ Botones de Hero y Banner conectados desde parche final');
+// ============================================================
+// ============================================================
 // BOTONES ADMIN — LISTENERS FALTANTES (v1)
 // ============================================================
 
