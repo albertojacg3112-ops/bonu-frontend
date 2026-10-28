@@ -7016,273 +7016,58 @@ document.getElementById('logo-home')?.addEventListener('click', () => { showHome
 document.getElementById('logo-home-product-page')?.addEventListener('click', () => { showHomeAndHideOthers(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
 // ============================================================
-// BOTÓN AGREGAR HERO SLIDE - CONEXIÓN DIRECTA A FIREBASE
+// ÚNICO BLOQUE DE CONTROL PARA HERO Y BANNER
 // ============================================================
+
+// 1. AGREGAR HERO SLIDE
 document.getElementById('add-hero-slide')?.addEventListener('click', async function() {
     const url = document.getElementById('hero-img-url')?.value.trim();
-    if (!url) {
-        toast('Escribe o pega una URL de imagen primero', 'warn');
-        return;
-    }
+    if (!url) { toast('Pega la URL de la imagen primero', 'warn'); return; }
     
     showLoading(true);
     try {
-        // 1. Traemos Firebase directo
         const { doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js");
-        
-        // 2. Buscamos los slides actuales en la base de datos
         const docRef = doc(db, 'config', 'heroSlides');
         const docSnap = await getDoc(docRef);
-        let slides = [];
-        if (docSnap.exists() && docSnap.data().slides) {
-            slides = docSnap.data().slides;
-        }
+        let slides = docSnap.exists() && docSnap.data().slides ? docSnap.data().slides : [];
         
-        // 3. Agregamos el nuevo
         slides.push({ imageUrl: url, duration: 4 });
-        
-        // 4. Guardamos en la base de datos
         await setDoc(docRef, { slides: slides, updatedAt: new Date().toISOString() }, { merge: true });
         
         toast('✅ Slide agregado y guardado');
         document.getElementById('hero-img-url').value = '';
-        
-        // Recargamos para que se vea
         setTimeout(() => window.location.reload(), 1000);
-        
     } catch (error) {
-        console.error("❌ Error:", error);
-        toast('Error al guardar: ' + error.message, 'err');
+        toast('Error: ' + error.message, 'err');
     }
     showLoading(false);
 });
-// ============================================================
-// ============================================================
-// CONEXIONES DE BOTONES (HERO Y BANNERS)
-// ============================================================
 
-// 1. GUARDAR HERO SLIDES
-document.getElementById('save-hero-slides')?.addEventListener('click', async function() {
-    const lista = document.getElementById('hero-slides-list');
-    if (typeof saveHeroSlides === 'function') {
-        await saveHeroSlides();
-        toast('✅ Slides guardados en Firebase');
-    } else {
-        toast('Error: La función saveHeroSlides no existe', 'err');
-    }
-});
-
-// 2. AGREGAR HERO SLIDE
-document.getElementById('add-hero-slide')?.addEventListener('click', async function() {
-    const url = document.getElementById('hero-img-url')?.value.trim();
-    const duration = parseInt(document.getElementById('hero-img-duration')?.value) || 4;
-    
-    if (!url) { 
-        toast('Pega la URL de la imagen primero', 'warn'); 
-        return; 
-    }
-    
-    try {
-        if (typeof heroSlides !== 'undefined') {
-            heroSlides.push({ imageUrl: url, duration: duration });
-            if (typeof saveHeroSlides === 'function') {
-                await saveHeroSlides();
-                toast('✅ Slide agregado y guardado');
-                document.getElementById('hero-img-url').value = '';
-            }
-        } else {
-            toast('Error: variable heroSlides no encontrada', 'err');
-        }
-    } catch(e) {
-        toast('Error al guardar slide: ' + e.message, 'err');
-    }
-});
-
-// 3. GUARDAR BANNER
+// 2. GUARDAR BANNER
 document.getElementById('guardar-banner')?.addEventListener('click', async function() {
     const url = document.getElementById('banner-url')?.value.trim();
     if (!url) { toast('Pega la URL de la imagen', 'warn'); return; }
     
-    try {
-        if (typeof banners !== 'undefined' && typeof saveBanners === 'function') {
-            banners.push({ imagen: url, duracion: 3, ubicacion: 'home', activo: true });
-            await saveBanners();
-            toast('✅ Banner guardado correctamente');
-            document.getElementById('banner-url').value = '';
-        } else {
-            toast('Error: variables de banners no encontradas', 'err');
-        }
-    } catch(e) {
-        toast('Error al guardar banner: ' + e.message, 'err');
-    }
-});
-
-console.log('✅ Botones de Hero y Banner conectados desde parche final');
-// ============================================================
-// ============================================================
-// BOTONES ADMIN — LISTENERS FALTANTES (v1)
-// ============================================================
-
-document.getElementById('guardar-banner')?.addEventListener('click', async function() {
-  const url = document.getElementById('banner-url')?.value.trim();
-  const fileInput = document.getElementById('banner-file');
-  const duracion = parseInt(document.getElementById('banner-duracion')?.value) || 3;
-  const ubicacion = document.getElementById('banner-ubicacion')?.value || 'home';
-  const accion = document.getElementById('banner-accion')?.value || 'url';
-  const accionValor = document.getElementById('banner-accion-valor')?.value || '';
-  const activo = document.getElementById('banner-activo')?.checked !== false;
-  let imagen = url;
-  if (fileInput && fileInput.files.length > 0) {
     showLoading(true);
     try {
-      const fd = new FormData();
-      fd.append('image', fileInput.files[0]);
-      fd.append('key', IMGBB_API_KEY);
-      const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.success) imagen = data.data.url;
-      else throw new Error(data.error?.message || 'Error ImgBB');
-    } catch(e) {
-      toast('Error subiendo banner: ' + e.message, 'err');
-      showLoading(false);
-      return;
+        const { doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js");
+        const docRef = doc(db, 'config', 'banners');
+        const docSnap = await getDoc(docRef);
+        let bannersData = docSnap.exists() && docSnap.data().banners ? docSnap.data().banners : [];
+        
+        bannersData.push({ imagen: url, duracion: 3, ubicacion: 'home', activo: true });
+        await setDoc(docRef, { banners: bannersData, updatedAt: new Date().toISOString() }, { merge: true });
+        
+        toast('✅ Banner guardado correctamente');
+        document.getElementById('banner-url').value = '';
+        setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+        toast('Error al guardar banner: ' + error.message, 'err');
     }
     showLoading(false);
-  }
-  if (!imagen) { toast('Pega una URL o sube un archivo', 'warn'); return; }
-  banners.push({ imagen, duracion, ubicacion, accion, accionValor, activo, fecha: new Date().toISOString() });
-  await saveBanners();
-  toast('✅ Banner guardado');
-  document.getElementById('banner-url').value = '';
-  if (fileInput) fileInput.value = '';
 });
 
-document.getElementById('btn-crear-cupon')?.addEventListener('click', async function() {
-  const codigo = document.getElementById('cupon-codigo')?.value.trim().toUpperCase();
-  const descuento = parseFloat(document.getElementById('cupon-descuento')?.value);
-  const minimo = parseFloat(document.getElementById('cupon-minimo')?.value) || 0;
-  const expira = document.getElementById('cupon-expira')?.value || null;
-  const usosMax = parseInt(document.getElementById('cupon-usos-max')?.value) || 999;
-  if (!codigo || !descuento) { toast('Código y descuento obligatorios', 'warn'); return; }
-  try {
-    await addDoc(collection(db, 'cupones'), {
-      codigo, descuento, minimoCompra: minimo, expira, usosMax, usos: 0,
-      fechaCreacion: new Date().toISOString()
-    });
-    toast('✅ Cupón creado');
-    cargarCuponesAdmin();
-    ['cupon-codigo','cupon-descuento','cupon-minimo','cupon-expira','cupon-usos-max']
-      .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-  } catch(e) { toast('Error: ' + e.message, 'err'); }
-});
-
-document.getElementById('save-comisiones')?.addEventListener('click', async function() {
-  const base = parseFloat(document.getElementById('comision-base')?.value) || 5;
-  const premium = parseFloat(document.getElementById('comision-premium')?.value) || 8;
-  const umbral = parseFloat(document.getElementById('umbral-premium')?.value) || 150000;
-  try {
-    await setConfigDoc('comisiones', { base, premium, umbral });
-    toast('✅ Comisiones guardadas');
-  } catch(e) { toast('Error: ' + e.message, 'err'); }
-});
-
-document.getElementById('refresh-ordenes')?.addEventListener('click', cargarOrdenesAdmin);
-document.getElementById('refresh-usuarios')?.addEventListener('click', cargarUsuariosAdmin);
-document.getElementById('refresh-vendedores')?.addEventListener('click', cargarVendedoresAdmin);
-document.getElementById('refresh-editor')?.addEventListener('click', cargarEditorAdmin);
-
-document.getElementById('export-orders-excel')?.addEventListener('click', function() {
-  if (!ordenesData.length) { toast('No hay datos', 'warn'); return; }
-  const filas = [['ID','Cliente','Email','Total','Estado','Pasarela','Fecha']];
-  ordenesData.forEach(o => filas.push([o.id, o.usuario||'', o.emailCliente||'', o.total||0, o.estado||'', o.pasarela||'', o.fecha||'']));
-  const hoja = XLSX.utils.aoa_to_sheet(filas);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, 'Ordenes');
-  XLSX.writeFile(libro, 'ordenes_' + new Date().toISOString().slice(0,10) + '.xlsx');
-  toast('✅ Excel exportado');
-});
-
-document.getElementById('export-metrics-excel')?.addEventListener('click', function() {
-  const filas = [
-    ['Métrica','Valor'],
-    ['Ventas', document.getElementById('d-ventas')?.textContent || '$0'],
-    ['Órdenes', document.getElementById('d-ordenes')?.textContent || '0'],
-    ['Usuarios', document.getElementById('d-usuarios')?.textContent || '0'],
-    ['Productos', document.getElementById('d-prods')?.textContent || '0']
-  ];
-  const hoja = XLSX.utils.aoa_to_sheet(filas);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, 'Metricas');
-  XLSX.writeFile(libro, 'metricas_' + new Date().toISOString().slice(0,10) + '.xlsx');
-  toast('✅ Métricas exportadas');
-});
-
-document.getElementById('add-hero-slide')?.addEventListener('click', async function() {
-  const url = document.getElementById('hero-img-url')?.value.trim();
-  const duration = parseInt(document.getElementById('hero-img-duration')?.value) || 4;
-  if (!url) { toast('Pega la URL de la imagen', 'warn'); return; }
-  await addHeroSlide(url, duration);
-  toast('✅ Slide agregado');
-  document.getElementById('hero-img-url').value = '';
-});
-
-document.getElementById('save-hero-slides')?.addEventListener('click', async function() {
-  await saveHeroSlides();
-  toast('✅ Slides guardados');
-});
-
-document.getElementById('descargar-plantilla')?.addEventListener('click', function() {
-  const filas = [
-    ['nombre','categoria','tipo','precioUnitario','precio6','precioProveedor','stock','descuento','proveedor','imagenes'],
-    ['Producto Ejemplo','Ropa de hombre','Ofertas',500,2700,300,100,10,'Bonü','']
-  ];
-  const hoja = XLSX.utils.aoa_to_sheet(filas);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, 'Plantilla');
-  XLSX.writeFile(libro, 'plantilla_bonu.xlsx');
-  toast('✅ Plantilla descargada');
-});
-
-document.getElementById('btn-importar-excel')?.addEventListener('click', async function() {
-  const input = document.getElementById('excel-file-input');
-  if (!input || !input.files.length) { toast('Selecciona un archivo', 'warn'); return; }
-  showLoading(true);
-  try {
-    const file = input.files[0];
-    const data = await file.arrayBuffer();
-    const wb = XLSX.read(data);
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws);
-    let importados = 0;
-    for (const row of rows) {
-      if (!row.nombre || !row.precioUnitario) continue;
-      await addDoc(collection(db, 'productos'), {
-        nombre: row.nombre,
-        categoria: row.categoria || 'General',
-        tipo: row.tipo || 'Ofertas',
-        precioFinal: parseFloat(row.precioUnitario),
-        precioOriginal: parseFloat(row.precioUnitario) * 1.2,
-        precio6: parseFloat(row.precio6) || parseFloat(row.precioUnitario) * 5,
-        precioProveedor: parseFloat(row.precioProveedor) || 0,
-        stock: parseInt(row.stock) || 0,
-        descuento: parseInt(row.descuento) || 0,
-        proveedor: row.proveedor || 'Bonü',
-        imagenes: row.imagenes ? String(row.imagenes).split(',') : [],
-        fechaSubida: new Date().toISOString()
-      });
-      importados++;
-    }
-    toast('✅ ' + importados + ' productos importados');
-    await loadProducts();
-    if (isAdmin) cargarEditorAdmin();
-  } catch(e) { toast('Error: ' + e.message, 'err'); }
-  showLoading(false);
-  document.getElementById('excel-file-input').value = '';
-});
-
-console.log('%c✅ Listeners admin cargados correctamente', 'color:#10b981;font-weight:bold;');
-// ============================================================
-// FIN BOTONES ADMIN
+console.log('✅ Control de Hero y Banner optimizado');
 // ============================================================
 </script>
 </body>
