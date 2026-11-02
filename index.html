@@ -1038,10 +1038,14 @@ button:active{transform:scale(0.97);}
       <div class="border-t pt-3 space-y-2">
         <p class="text-sm"><strong>Paso 1:</strong> Abre la autorización e inicia sesión con tu cuenta AliExpress:</p>
         <button id="ae-abrir-autorizacion" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-700 transition">1️⃣ Abrir autorización</button>
-        <p class="text-sm"><strong>Paso 2:</strong> Al autorizar, verás en la barra de direcciones <code>?code=XXXXX</code>. Copia TODO lo que está después de <code>code=</code> y pégalo aquí:</p>
-        <input type="text" id="ae-code-input" placeholder="3_552496_xxxxxxxx..." class="form-input">
-        <button id="ae-canjear-btn" class="bg-green-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-green-700 transition w-full">2️⃣ Canjear y guardar token</button>
-        <p class="text-xs text-gray-400">⏱️ El code dura 3 minutos: haz los pasos sin pausa. Si da error, repite (se genera uno nuevo).</p>
+        <p class="text-sm">✅ Si al autorizar ves la pantalla <strong>"AliExpress conectado"</strong>, ¡listo! El token se canjeó solo. (Si viste un error, usa el Plan B de abajo.)</p>
+        <div class="border-t pt-2 space-y-2">
+          <p class="text-sm font-semibold">Plan B — canje manual (solo si el paso anterior mostró error):</p>
+          <p class="text-sm">Al autorizar, verás en la barra de direcciones <code>?code=XXXXX</code>. Copia TODO lo que está después de <code>code=</code> y pégalo aquí:</p>
+          <input type="text" id="ae-code-input" placeholder="3_552496_xxxxxxxx..." class="form-input">
+          <button id="ae-canjear-btn" class="bg-green-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-green-700 transition w-full">2️⃣ Canjear y guardar token</button>
+        </div>
+        <p class="text-xs text-gray-400">⏱️ El code dura pocos minutos: haz los pasos sin pausa. Si da error, repite (se genera uno nuevo). Al terminar, pulsa el botón 🔑 otra vez para refrescar el estado.</p>
       </div>
     </div>
   </div>
@@ -1065,7 +1069,10 @@ const IMGBB_API_KEY = 'eb5937fe11a66b45abe3619efe08292a';
 
 const app = initializeApp(FB_CONFIG);
 window._firebaseApp = app;
-const analytics = getAnalytics(app);
+// FIX: getAnalytics sin protección — si analytics falla (cookies bloqueadas, iframe,
+// navegador sin soporte) TODO el módulo moría y la tienda no cargaba. Ahora queda aislado.
+let analytics = null;
+try { analytics = getAnalytics(app); } catch (e) { console.warn('⚠️ Analytics no disponible:', e.message); }
 const db = getFirestore(app);
 const auth = getAuth(app);
 const stripe = Stripe(STRIPE_PK);
@@ -3536,7 +3543,6 @@ function saveSisterStoresFromAdmin() {
 }
 document.getElementById('add-sister-store')?.addEventListener('click', addSisterStore);
 document.getElementById('save-sister-stores')?.addEventListener('click', saveSisterStoresFromAdmin);
-
 // =====================================================================
 // CARRITO Y CHECKOUT
 // =====================================================================
@@ -4713,7 +4719,6 @@ async function cargarUsuariosAdmin() {
 document.getElementById('usuarios-filtro-tipo')?.addEventListener('change', cargarUsuariosAdmin);
 document.getElementById('usuarios-filtro-gasto')?.addEventListener('change', cargarUsuariosAdmin);
 document.getElementById('usuarios-buscar')?.addEventListener('input', cargarUsuariosAdmin);
-
 // =====================================================================
 // VENDEDORES ADMIN CON COMISIONES DESGLOSADAS
 // =====================================================================
@@ -5599,8 +5604,12 @@ document.getElementById('btn-importar-proveedor')?.addEventListener('click', asy
       method: 'GET',
       headers: { 'Authorization': 'Bearer ' + idToken }
     });
-    const data = await response.json();
-    if (!data.success) throw new Error(data.error || 'Error del servidor');
+    // FIX: si el backend cae o responde HTML (502/429 de Render), response.json() explotaba
+    // con "Unexpected token <" — ahora el error dice el código HTTP real.
+    let data;
+    try { data = await response.json(); }
+    catch (_) { throw new Error(`El backend respondió HTTP ${response.status} sin JSON (revisa los logs del servidor)`); }
+    if (!response.ok || !data.success) throw new Error(data.error || `Error del servidor (HTTP ${response.status})`);
     const p = data.data;
     document.getElementById('p-nombre').value = p.nombre || '';
     document.getElementById('p-desc').value = String(p.descripcion || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2000);
@@ -5622,18 +5631,27 @@ document.getElementById('btn-importar-proveedor')?.addEventListener('click', asy
 // 🔑 TOKEN ALIEXPRESS — panel de canje v1
 async function aeCargarEstado() {
   const el = document.getElementById('ae-token-estado');
+  if (!el) return;
   try {
     const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) throw new Error('Sesión admin no encontrada. Vuelve a iniciar sesión.');
     const r = await fetch(`${API_URL}/api/admin/aliexpress/token/estado`, { headers: { 'Authorization': 'Bearer ' + idToken } });
     const d = await r.json();
+    if (!r.ok || d.success === false) throw new Error(d.error || ('HTTP ' + r.status));
+    let html;
     if (d.hayTokenFirestore) {
-      el.innerHTML = `✅ Token activo · canjeado hace ${d.diasDesde} día(s) · auto-renovación: ${d.autoRenovacion ? 'activa' : 'no disponible'}`;
+      const horas = d.accessExpiraEnHoras;
+      html = `✅ Token activo · canjeado hace ${d.diasDesde} día(s)` +
+             (horas !== null && horas !== undefined ? ` · vence en ~${horas} h` : '') +
+             ` · auto-renovación: ${d.autoRenovacion ? 'activa' : 'no disponible'}`;
+      if (d.necesitaReautorizar) html = '🔁 El token expiró. Vuelve a autorizar con los pasos de abajo.';
     } else {
-      el.innerHTML = '⚠️ Sin token guardado en el sistema. Usa los pasos de abajo para conectar.';
+      html = '⚠️ Sin token guardado en el sistema. Usa los pasos de abajo para conectar.';
     }
+    el.innerHTML = html;
     window.aeAutorizarUrl = d.autorizarUrl;
   } catch(e) {
-    el.textContent = 'No pude leer el estado: ' + e.message;
+    el.innerHTML = '⚠️ No pude leer el estado: ' + e.message;
   }
 }
 document.getElementById('btn-ae-token')?.addEventListener('click', () => {
@@ -5655,8 +5673,11 @@ document.getElementById('ae-canjear-btn')?.addEventListener('click', async () =>
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
       body: JSON.stringify({ code })
     });
-    const d = await r.json();
-    if (!d.success) throw new Error(d.error);
+    const d = await (async () => {
+      try { return await r.json(); }
+      catch (_) { throw new Error(`El backend respondió HTTP ${r.status} sin JSON (revisa los logs del servidor)`); }
+    })();
+    if (!r.ok || !d.success) throw new Error(d.error || `Error del servidor (HTTP ${r.status})`);
     toast('✅ ' + d.message);
     document.getElementById('ae-code-input').value = '';
     document.getElementById('ae-token-modal').classList.remove('show');
@@ -5665,6 +5686,17 @@ document.getElementById('ae-canjear-btn')?.addEventListener('click', async () =>
   }
   showLoading(false);
 });
+// Autocompletado del code: si la URL actual trae ?code=... (redirect de AliExpress al sitio), se llena solo.
+(function aeAutocompletarCode() {
+  try {
+    const c = new URLSearchParams(window.location.search).get('code');
+    if (c) {
+      const inp = document.getElementById('ae-code-input');
+      if (inp && !inp.value) inp.value = c;
+      toast('Code detectado en la URL: pulsa "Canjear y guardar token"', 'warn');
+    }
+  } catch (_) {}
+})();
 // 🏷️ GENERADOR SKU AUTOMÁTICO BONÜ
 // =====================================================================
 const SKU_PREFIJOS = {
@@ -5917,7 +5949,6 @@ if (typeof window.addToCart === 'undefined') {
 }
 document.getElementById('editor-filtro-categoria')?.addEventListener('change', () => renderEditorTable(allEditorProducts));
 document.getElementById('editor-search')?.addEventListener('input', () => renderEditorTable(allEditorProducts));
-
 // =====================================================================
 // CARGA DE PRODUCTOS
 // =====================================================================
@@ -6043,9 +6074,12 @@ document.addEventListener('click', function(e) {
 async function sendEmailCampaign(to, subject, body, imageUrl) {
   showLoading(true);
   try {
+    // FIX: esta llamada no enviaba el token de admin — el backend ahora exige verificarAdmin.
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) throw new Error('Sesión admin no encontrada. Vuelve a iniciar sesión.');
     const response = await fetch(`${API_URL}/api/admin/send-email`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
       body: JSON.stringify({ to, subject, body, imageUrl })
     });
     const data = await response.json();
