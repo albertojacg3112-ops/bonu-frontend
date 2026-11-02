@@ -594,6 +594,10 @@ button:active{transform:scale(0.97);}
             <h3 class="font-bold mb-3">📈 Ventas por pasarela</h3>
             <canvas id="pasarelas-chart" height="200"></canvas>
           </div>
+          <div class="stat-card">
+            <h3 class="font-bold mb-3">🛍️ Productos por categoría</h3>
+            <canvas id="categorias-chart" height="200"></canvas>
+          </div>
         </div>
         <div class="stat-card">
           <h3 class="font-bold mb-3">Órdenes Recientes</h3>
@@ -903,6 +907,52 @@ button:active{transform:scale(0.97);}
         <div class="bg-white rounded-xl p-6 space-y-4">
           <h2 class="text-xl font-bold mb-4">📚 Gestión de Libros Digitales</h2>
           <p class="text-sm text-gray-600">Los libros digitales se entregan por correo después de la compra. El enlace de descarga es de un solo uso.</p>
+          <div class="border rounded-xl p-4 bg-gray-50 mb-4">
+            <h3 id="lb-form-titulo" class="font-bold mb-3">➕ Subir nuevo libro</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <input type="text" id="lb-nombre" placeholder="Nombre del libro *" class="form-input">
+                <input type="number" id="lb-precio" placeholder="Precio (MXN) *" step="0.01" min="0" class="form-input">
+                <select id="lb-categoria" class="form-input">
+                  <option value="">Categoría del libro *</option>
+                  <option value="alimentacion">Alimentación</option>
+                  <option value="salud">Salud</option>
+                  <option value="finanzas">Finanzas</option>
+                  <option value="historias">Historias</option>
+                  <option value="novelas">Novelas</option>
+                  <option value="motivacion">Motivación</option>
+                  <option value="desarrollo-personal">Desarrollo personal</option>
+                  <option value="cocina">Cocina</option>
+                  <option value="superacion-personal">Superación personal</option>
+                  <option value="tecnico">Técnico</option>
+                  <option value="curso">Curso</option>
+                  <option value="guia">Guía</option>
+                  <option value="manual">Manual</option>
+                  <option value="leyenda">Leyenda</option>
+                  <option value="tecnologia">Tecnología</option>
+                  <option value="inteligencia-artificial">Inteligencia Artificial</option>
+                  <option value="negocios">Negocios</option>
+                  <option value="ninos">Niños</option>
+                  <option value="mujer">Mujer</option>
+                  <option value="emprendimiento">Emprendimiento</option>
+                </select>
+                <textarea id="lb-desc" rows="3" placeholder="Descripción del libro" class="form-input"></textarea>
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs text-gray-500 block">Portada (imagen) *</label>
+                <input type="file" id="lb-portada-file" accept="image/*" class="form-input text-xs">
+                <input type="text" id="lb-portada-url" placeholder="...o pega la URL de la portada" class="form-input text-xs">
+                <img id="lb-portada-preview" class="hidden w-24 h-32 object-cover rounded-lg border" alt="Portada">
+                <label class="text-xs text-gray-500 block mt-1">Archivo PDF del libro *</label>
+                <input type="file" id="lb-pdf-file" accept="application/pdf" class="form-input text-xs">
+                <p id="lb-pdf-status" class="text-xs text-gray-500">Ningún archivo seleccionado</p>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button id="btn-guardar-libro" class="bg-green-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-green-600 transition">💾 Guardar libro</button>
+              <button id="btn-cancelar-edicion-libro" class="hidden bg-gray-300 text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-400 transition">Cancelar edición</button>
+            </div>
+          </div>
           <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b"><th>Producto</th><th>PDF</th><th>Descargas</th><th>Acciones</th></tr></thead><tbody id="tabla-libros-digitales"></tbody></table></div>
         </div>
       </div>
@@ -1223,7 +1273,7 @@ const TRADUCCIONES = {
     'banners': 'Banners',
     'tiendas_hermanas': 'Tiendas Hermanas',
     'devoluciones': 'Devoluciones',
-    'importar': 'Importar Excel',
+ 'importar': 'Importar Excel',
     'hero_slider': 'Hero Slider',
     'campanas_email': 'Campañas Email',
     'campanas_whatsapp': 'Campañas WhatsApp',
@@ -2498,7 +2548,7 @@ const TRADUCCIONES = {
     'variantes': 'Variantes',
     'guardar_variantes': 'Salvar Variantes',
     'producto_propio': 'Produto Próprio',
-    'proveedores': 'Fornecedores',
+ 'proveedores': 'Fornecedores',
     'otro_proveedor': 'Outro Fornecedor',
     'cargar_datos': 'Carregar dados do fornecedor',
     'importando': 'Importando...',
@@ -3543,6 +3593,7 @@ function saveSisterStoresFromAdmin() {
 }
 document.getElementById('add-sister-store')?.addEventListener('click', addSisterStore);
 document.getElementById('save-sister-stores')?.addEventListener('click', saveSisterStoresFromAdmin);
+
 // =====================================================================
 // CARRITO Y CHECKOUT
 // =====================================================================
@@ -3772,7 +3823,7 @@ function iniciarEscuchaOrdenes() {
         const data = change.doc.data();
         const fechaOrden = new Date(data.fecha);
         const ahora = new Date();
-        if ((ahora - fechaOrden) < 60000) {
+   if ((ahora - fechaOrden) < 60000) {
           toast(`📦 Nueva orden #${data.id} - ${fmt(data.total)}`, 'ok');
           cargarDashboard();
           cargarOrdenesAdmin();
@@ -4719,6 +4770,7 @@ async function cargarUsuariosAdmin() {
 document.getElementById('usuarios-filtro-tipo')?.addEventListener('change', cargarUsuariosAdmin);
 document.getElementById('usuarios-filtro-gasto')?.addEventListener('change', cargarUsuariosAdmin);
 document.getElementById('usuarios-buscar')?.addEventListener('input', cargarUsuariosAdmin);
+
 // =====================================================================
 // VENDEDORES ADMIN CON COMISIONES DESGLOSADAS
 // =====================================================================
@@ -5046,7 +5098,7 @@ document.getElementById('generar-reporte')?.addEventListener('click', async func
       const fecha = new Date(o.fecha);
       if(fecha >= inicio && fecha <= fin) {
         o.id = doc.id;
-        pedidos.push(o);
+      pedidos.push(o);
       }
     });
     
@@ -5949,6 +6001,7 @@ if (typeof window.addToCart === 'undefined') {
 }
 document.getElementById('editor-filtro-categoria')?.addEventListener('change', () => renderEditorTable(allEditorProducts));
 document.getElementById('editor-search')?.addEventListener('input', () => renderEditorTable(allEditorProducts));
+
 // =====================================================================
 // CARGA DE PRODUCTOS
 // =====================================================================
@@ -7077,28 +7130,512 @@ document.getElementById('add-hero-slide')?.addEventListener('click', async funct
     showLoading(false);
 });
 
-// 2. GUARDAR BANNER
+// =====================================================================
+// 🩹 PARCHE ADMIN 100% — FRAGMENTO 1: cerrar panel, refresh,
+//    cupones (crear + WhatsApp) y banners (formulario completo)
+// =====================================================================
+
+// --- Cerrar panel admin ---
+document.getElementById('close-admin-btn')?.addEventListener('click', () => {
+  showAdminPanel(false);
+  toast('Panel de administración cerrado');
+});
+
+// --- Botones "Actualizar" de cada tabla ---
+document.getElementById('refresh-ordenes')?.addEventListener('click', async () => {
+  showLoading(true); await cargarOrdenesAdmin(); showLoading(false); toast('✅ Órdenes actualizadas');
+});
+document.getElementById('refresh-usuarios')?.addEventListener('click', async () => {
+  showLoading(true); await cargarUsuariosAdmin(); showLoading(false); toast('✅ Usuarios actualizados');
+});
+document.getElementById('refresh-vendedores')?.addEventListener('click', async () => {
+  showLoading(true); await cargarVendedoresAdmin(); showLoading(false); toast('✅ Vendedores actualizados');
+});
+document.getElementById('refresh-editor')?.addEventListener('click', async () => {
+  showLoading(true); await cargarEditorAdmin(); showLoading(false); toast('✅ Productos cargados');
+});
+
+// --- Crear cupón ---
+document.getElementById('btn-crear-cupon')?.addEventListener('click', async () => {
+  const codigo = (document.getElementById('cupon-codigo')?.value || '').trim().toUpperCase();
+  const descuento = parseFloat(document.getElementById('cupon-descuento')?.value);
+  const minimo = parseFloat(document.getElementById('cupon-minimo')?.value) || 0;
+  const expira = document.getElementById('cupon-expira')?.value || '';
+  const usosMax = parseInt(document.getElementById('cupon-usos-max')?.value) || 0;
+  if(!codigo) { toast('Escribe el código del cupón', 'warn'); return; }
+  if(isNaN(descuento) || descuento <= 0 || descuento > 100) { toast('El descuento debe ser entre 1 y 100', 'warn'); return; }
+  showLoading(true);
+  try {
+    const dup = await getDocs(query(collection(db, 'cupones'), where('codigo', '==', codigo)));
+    if(!dup.empty) { toast('Ese código de cupón ya existe', 'warn'); showLoading(false); return; }
+    await addDoc(collection(db, 'cupones'), { codigo, descuento, minimo, expira, usos: 0, usosMax, activo: true, fechaCreacion: new Date().toISOString() });
+    agregarLogAuditoria('Creación de cupón', `Cupón ${codigo} (${descuento}%)`);
+    toast('✅ Cupón ' + codigo + ' creado');
+    ['cupon-codigo','cupon-descuento','cupon-usos-max'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    cargarCuponesAdmin();
+  } catch(e) { toast('Error: ' + e.message, 'err'); }
+  showLoading(false);
+});
+
+// --- Enviar cupón por WhatsApp ---
+document.getElementById('btn-enviar-cupon-whatsapp')?.addEventListener('click', () => {
+  const codigo = (document.getElementById('cupon-codigo')?.value || '').trim().toUpperCase();
+  const descuento = parseFloat(document.getElementById('cupon-descuento')?.value) || 0;
+  if(!codigo) { toast('Escribe el código del cupón a enviar', 'warn'); return; }
+  const phone = prompt('Teléfono del cliente (con lada, ej. 521234567890):');
+  if(!phone) return;
+  const msg = '🎁 ¡Hola! Bonü te regala un cupón exclusivo: *' + codigo + '* — ' + descuento + '% de descuento en tu compra. Canjealo en tu próxima orden. 🛒';
+  window.open('https://wa.me/' + phone.replace(/\D/g,'') + '?text=' + encodeURIComponent(msg), '_blank');
+  agregarLogAuditoria('Envío de cupón por WhatsApp', `Cupón ${codigo} enviado a ${phone}`);
+  toast('Abriendo WhatsApp...');
+});
+
+// --- BANNERS: formulario completo (REEMPLAZA al bloque viejo) ---
+let bannerImagenSubida = '';
+document.getElementById('banner-url')?.addEventListener('input', function() {
+  bannerImagenSubida = '';
+  const pv = document.getElementById('banner-preview');
+  if(!pv) return;
+  const url = this.value.trim();
+  if(url) pv.innerHTML = '<img src="' + url + '" class="w-full object-cover rounded-lg" style="max-height:200px">';
+});
+document.getElementById('banner-file')?.addEventListener('change', async function() {
+  if(!this.files || !this.files.length) return;
+  const url = await subirArchivoImgBB(this.files[0], null, '');
+  if(url) {
+    bannerImagenSubida = url;
+    const pv = document.getElementById('banner-preview');
+    if(pv) pv.innerHTML = '<img src="' + url + '" class="w-full object-cover rounded-lg" style="max-height:200px">';
+    toast('✅ Imagen subida a ImgBB');
+  }
+});
+document.getElementById('banner-ubicacion')?.addEventListener('change', function() {
+  const sel = document.getElementById('banner-categoria-select');
+  if(sel) sel.classList.toggle('hidden', this.value !== 'categoria');
+});
+document.getElementById('banner-accion')?.addEventListener('change', function() {
+  const cont = document.getElementById('banner-accion-valor-container');
+  if(cont) cont.classList.toggle('hidden', !['url','producto','categoria'].includes(this.value));
+});
 document.getElementById('guardar-banner')?.addEventListener('click', async function() {
-    const url = document.getElementById('banner-url')?.value.trim();
-    if (!url) { toast('Pega la URL de la imagen', 'warn'); return; }
-    
-    showLoading(true);
-    try {
-        const { doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js");
-        const docRef = doc(db, 'config', 'banners');
-        const docSnap = await getDoc(docRef);
-        let bannersData = docSnap.exists() && docSnap.data().banners ? docSnap.data().banners : [];
-        
-        bannersData.push({ imagen: url, duracion: 3, ubicacion: 'home', activo: true });
-        await setDoc(docRef, { banners: bannersData, updatedAt: new Date().toISOString() }, { merge: true });
-        
-        toast('✅ Banner guardado correctamente');
-        document.getElementById('banner-url').value = '';
-        setTimeout(() => window.location.reload(), 1000);
-    } catch (error) {
-        toast('Error al guardar banner: ' + error.message, 'err');
+  const imagen = bannerImagenSubida || (document.getElementById('banner-url')?.value.trim() || '');
+  if(!imagen) { toast('Pega la URL de la imagen o sube un archivo', 'warn'); return; }
+  const duracion = parseInt(document.getElementById('banner-duracion')?.value) || 3;
+  const ubicacion = document.getElementById('banner-ubicacion')?.value || 'home';
+  const accion = document.getElementById('banner-accion')?.value || 'url';
+  const activo = document.getElementById('banner-activo')?.checked !== false;
+  const accionValor = (document.getElementById('banner-accion-valor')?.value || '').trim();
+  if(['url','producto','categoria'].includes(accion) && !accionValor) { toast('Completa el destino del banner (URL, ID o categoría)', 'warn'); return; }
+  const nuevo = { imagen, duracion, ubicacion, activo, accion, accionValor };
+  if(ubicacion === 'categoria') {
+    const cat = document.getElementById('banner-categoria')?.value || '';
+    if(!cat) { toast('Selecciona la categoría destino', 'warn'); return; }
+    nuevo.categoria = cat;
+  }
+  showLoading(true);
+  try {
+    banners.push(nuevo);
+    await saveBanners();
+    agregarLogAuditoria('Creación de banner', `Banner ${ubicacion} (${duracion}s)`);
+    toast('✅ Banner guardado y publicado');
+    bannerImagenSubida = '';
+    const bu = document.getElementById('banner-url'); if(bu) bu.value = '';
+    const bf = document.getElementById('banner-file'); if(bf) bf.value = '';
+    const av = document.getElementById('banner-accion-valor'); if(av) av.value = '';
+    const pv = document.getElementById('banner-preview'); if(pv) pv.innerHTML = '<span class="text-gray-400">Vista previa</span>';
+  } catch(e) { toast('Error: ' + e.message, 'err'); }
+  showLoading(false);
+});
+
+// =====================================================================
+// 🩹 PARCHE ADMIN 100% — FRAGMENTO 2: mayoreo B2B, comisiones,
+//    devoluciones, importar Excel, dashboard y exportaciones
+// =====================================================================
+
+// --- MAYOREO B2B: carrito interno ---
+let mayoreoCart = [];
+function renderMayoreo() {
+  const lista = document.getElementById('lista-mayoreo-productos');
+  if(lista) {
+    lista.innerHTML = mayoreoCart.length ? mayoreoCart.map((it, idx) => `
+      <div class="flex justify-between items-center border-b pb-2 text-sm">
+        <div><strong>${escapeHtml(it.nombre)}</strong><br><span class="text-xs text-gray-500">${it.cantidad} × ${fmt(it.precio)}</span></div>
+        <div class="flex items-center gap-2"><span class="font-bold">${fmt(it.cantidad * it.precio)}</span><button class="mayoreo-quitar text-red-500 hover:text-red-700 transition" data-idx="${idx}">🗑️</button></div>
+      </div>`).join('') : '<p class="text-gray-400 text-sm">Sin productos. Agrégalos del panel derecho.</p>';
+  }
+  const total = mayoreoCart.reduce((s, it) => s + it.cantidad * it.precio, 0);
+  const t = document.getElementById('total-mayoreo');
+  if(t) t.textContent = fmt(total);
+}
+document.getElementById('agregar-producto-mayoreo')?.addEventListener('click', () => {
+  const sel = document.getElementById('producto-mayoreo');
+  const id = sel?.value;
+  if(!id) { toast('Selecciona un producto', 'warn'); return; }
+  const cant = parseInt(document.getElementById('cantidad-mayoreo')?.value) || 0;
+  if(cant <= 0) { toast('Escribe una cantidad válida', 'warn'); return; }
+  let precio = parseFloat(document.getElementById('precio-unitario-mayoreo')?.value);
+  const prod = productos.find(p => p.id === id);
+  if(isNaN(precio) || precio <= 0) precio = prod ? prod.precioFinal : 0;
+  if(!precio) { toast('Precio unitario inválido', 'warn'); return; }
+  mayoreoCart.push({ id, nombre: prod ? prod.nombre : 'Producto', precio, cantidad: cant, proveedor: prod ? (prod.proveedor || 'Bonü') : 'Bonü' });
+  const c = document.getElementById('cantidad-mayoreo'); if(c) c.value = '';
+  const pu = document.getElementById('precio-unitario-mayoreo'); if(pu) pu.value = '';
+  renderMayoreo();
+});
+document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
+  const q = e.target.closest('.mayoreo-quitar');
+  if(q) { mayoreoCart.splice(parseInt(q.dataset.idx), 1); renderMayoreo(); }
+});
+document.getElementById('generar-pedido-mayoreo')?.addEventListener('click', async () => {
+  if(!mayoreoCart.length) { toast('Agrega productos al pedido', 'warn'); return; }
+  const clienteSelect = document.getElementById('cliente-mayoreo')?.value || '';
+  const nuevoCliente = (document.getElementById('nuevo-cliente-mayoreo')?.value || '').trim();
+  const cliente = nuevoCliente || clienteSelect;
+  if(!cliente) { toast('Selecciona un cliente o escribe el nombre de uno nuevo', 'warn'); return; }
+  const rfc = (document.getElementById('rfc-cliente')?.value || '').trim();
+  const razon = (document.getElementById('razon-social')?.value || '').trim();
+  const pasarela = document.getElementById('metodo-pago-mayoreo')?.value || 'bonupay';
+  const total = mayoreoCart.reduce((s, it) => s + it.cantidad * it.precio, 0);
+  showLoading(true);
+  try {
+    const ref = await addDoc(collection(db, 'pedidos'), {
+      usuario: cliente,
+      email: clienteSelect || '',
+      clienteNombre: cliente,
+      items: mayoreoCart.map(it => ({ id: it.id, nombre: it.nombre, precio: it.precio, cantidad: it.cantidad, proveedor: it.proveedor })),
+      subtotal: Math.round((total / 1.16) * 100) / 100,
+      iva: Math.round((total - total / 1.16) * 100) / 100,
+      total,
+      estado: 'pagado',
+      pasarela,
+      tipo: 'mayoreo',
+      rfc,
+      razonSocial: razon,
+      canal: 'admin-b2b',
+      fecha: new Date().toISOString()
+    });
+    for(const it of mayoreoCart) {
+      try {
+        await runTransaction(db, async (tx) => {
+          const refP = doc(db, 'productos', it.id);
+          const snapP = await tx.get(refP);
+          if(snapP.exists()) tx.update(refP, { stock: Math.max(0, (snapP.data().stock || 0) - it.cantidad) });
+        });
+      } catch(err) { console.error(err); }
     }
-    showLoading(false);
+    await addDoc(collection(db, 'transacciones'), { id: 'TXM' + Date.now(), ordenId: ref.id, monto: total, pasarela, estado: 'aprobada', tipo: 'mayoreo', fecha: new Date().toISOString() });
+    agregarLogAuditoria('Pedido mayoreo B2B', `Pedido ${ref.id.slice(-8)} — ${fmt(total)} vía ${pasarela}`);
+    toast('✅ Pedido B2B generado y cobrado (' + ref.id.slice(-8) + ')');
+    mayoreoCart = [];
+    renderMayoreo();
+    const nc = document.getElementById('nuevo-cliente-mayoreo'); if(nc) nc.value = '';
+    const rc = document.getElementById('rfc-cliente'); if(rc) rc.value = '';
+    const rz = document.getElementById('razon-social'); if(rz) rz.value = '';
+    cargarDashboard();
+    cargarTransaccionesAdmin();
+  } catch(e) { toast('Error: ' + e.message, 'err'); }
+  showLoading(false);
+});
+document.getElementById('facturar-mayoreo')?.addEventListener('click', () => {
+  if(!mayoreoCart.length) { toast('Agrega productos para poder facturar', 'warn'); return; }
+  const cliente = (document.getElementById('nuevo-cliente-mayoreo')?.value || '').trim() || document.getElementById('cliente-mayoreo')?.value || 'Cliente B2B';
+  const rfc = (document.getElementById('rfc-cliente')?.value || '').trim() || 'XAXX010101000';
+  const razon = (document.getElementById('razon-social')?.value || '').trim() || cliente;
+  const total = mayoreoCart.reduce((s, it) => s + it.cantidad * it.precio, 0);
+  const subtotal = total / 1.16;
+  const iva = total - subtotal;
+  const filas = mayoreoCart.map(it => '<tr><td style="padding:6px;border-bottom:1px solid #eee">' + escapeHtml(it.nombre) + '</td><td style="padding:6px;text-align:center;border-bottom:1px solid #eee">' + it.cantidad + '</td><td style="padding:6px;text-align:right;border-bottom:1px solid #eee">' + fmt(it.precio) + '</td><td style="padding:6px;text-align:right;border-bottom:1px solid #eee">' + fmt(it.cantidad * it.precio) + '</td></tr>').join('');
+  const w = window.open('', '_blank', 'width=820,height=940');
+  if(!w) { toast('Permite las ventanas emergentes para generar la factura', 'warn'); return; }
+  w.document.write('<html><head><title>Factura Bonü — Mayoreo</title></head><body style="font-family:Arial,sans-serif;padding:40px;color:#222">'
+    + '<div style="display:flex;justify-content:space-between;border-bottom:3px solid #facc15;padding-bottom:12px">'
+    + '<div><h1 style="margin:0;color:#111">Bonü</h1><p style="margin:0;color:#777;font-size:12px">Global Marketplace Enterprise</p></div>'
+    + '<div style="text-align:right"><h2 style="margin:0">FACTURA</h2><p style="margin:0;font-size:12px;color:#777">' + new Date().toLocaleString('es-MX') + '</p></div></div>'
+    + '<div style="margin:16px 0"><strong>Cliente:</strong> ' + escapeHtml(razon) + '<br><strong>RFC/TAX ID:</strong> ' + escapeHtml(rfc) + '<br><strong>Contacto:</strong> ' + escapeHtml(cliente) + '</div>'
+    + '<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#fef9c3"><th style="padding:8px;text-align:left">Producto</th><th style="padding:8px">Cant.</th><th style="padding:8px;text-align:right">P. Unitario</th><th style="padding:8px;text-align:right">Importe</th></tr></thead><tbody>' + filas + '</tbody></table>'
+    + '<div style="margin-top:16px;text-align:right;font-size:14px"><p style="margin:4px 0">Subtotal: ' + fmt(subtotal) + '</p><p style="margin:4px 0">IVA (16% incluido): ' + fmt(iva) + '</p><p style="margin:8px 0;font-size:18px;font-weight:bold;border-top:2px solid #222;padding-top:8px">TOTAL: ' + fmt(total) + '</p></div>'
+    + '<p style="margin-top:30px;font-size:11px;color:#999;text-align:center">Documento informativo generado por el panel de administración Bonü.</p>'
+    + '</body></html>');
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 500);
+  agregarLogAuditoria('Factura mayoreo', `Factura impresa por ${fmt(total)}`);
+});
+
+// --- COMISIONES ADMIN ---
+async function cargarComisionesAdmin() {
+  try {
+    const data = await getConfigDoc('comisiones');
+    if(!data) return;
+    const b = document.getElementById('comision-base'); if(b && data.comision_base != null) b.value = data.comision_base;
+    const p = document.getElementById('comision-premium'); if(p && data.comision_premium != null) p.value = data.comision_premium;
+    const u = document.getElementById('umbral-premium'); if(u && data.umbral_premium != null) u.value = data.umbral_premium;
+  } catch(e) { console.error(e); }
+}
+document.getElementById('save-comisiones')?.addEventListener('click', async () => {
+  const base = parseFloat(document.getElementById('comision-base')?.value);
+  const premium = parseFloat(document.getElementById('comision-premium')?.value);
+  const umbral = parseFloat(document.getElementById('umbral-premium')?.value);
+  if(isNaN(base) || isNaN(premium) || isNaN(umbral)) { toast('Completa los tres valores de comisión', 'warn'); return; }
+  showLoading(true);
+  try {
+    await setConfigDoc('comisiones', { comision_base: base, comision_premium: premium, umbral_premium: umbral, updatedAt: new Date().toISOString() });
+    agregarLogAuditoria('Actualización de comisiones', `Base ${base}%, Premium ${premium}%, Umbral ${fmt(umbral)}`);
+    toast('✅ Comisiones guardadas');
+  } catch(e) { toast('Error: ' + e.message, 'err'); }
+  showLoading(false);
+});
+document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
+  if(e.target.closest('.admin-nav-btn')?.dataset.tab === 'comisiones') cargarComisionesAdmin();
+});
+cargarComisionesAdmin();
+
+// --- DEVOLUCIONES ---
+let devolucionesCache = [];
+function cargarDevolucionesAdmin() {
+  try {
+    onSnapshot(collection(db, 'devoluciones'), snap => {
+      devolucionesCache = [];
+      snap.forEach(d => devolucionesCache.push({ id: d.id, ...d.data() }));
+      const tbody = document.getElementById('admin-devoluciones-list');
+      if(!tbody) return;
+      if(!devolucionesCache.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-gray-400">No hay solicitudes de devolución</td></tr>'; return; }
+      tbody.innerHTML = devolucionesCache.map(dev => `
+        <tr class="border-b">
+          <td class="py-2 text-xs">${(dev.id || '').slice(-8)}</td>
+          <td class="py-2">${escapeHtml(dev.cliente || dev.usuario || '—')}</td>
+          <td class="py-2">${escapeHtml(dev.producto || dev.productoNombre || '—')}</td>
+          <td class="py-2 text-xs">${escapeHtml(dev.motivo || '')}</td>
+          <td class="py-2">${fmt(dev.monto || 0)}</td>
+          <td class="py-2"><span class="badge badge-${escapeHtml(dev.estado || 'pendiente')}">${escapeHtml(dev.estado || 'pendiente')}</span></td>
+          <td class="py-2">
+            ${(!dev.estado || dev.estado === 'pendiente') ? `
+              <button class="dev-aprobar bg-green-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-green-600 transition" data-id="${dev.id}">✅ Aprobar</button>
+              <button class="dev-rechazar bg-red-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-red-600 transition" data-id="${dev.id}">❌ Rechazar</button>` : '—'}
+          </td>
+        </tr>`).join('');
+    }, err => console.error(err));
+  } catch(e) { console.error(e); }
+}
+document.querySelector('.admin-overlay')?.addEventListener('click', async (e) => {
+  const aprobar = e.target.closest('.dev-aprobar');
+  const rechazar = e.target.closest('.dev-rechazar');
+  if(!aprobar && !rechazar) return;
+  const dev = devolucionesCache.find(d => d.id === (aprobar || rechazar).dataset.id);
+  if(!dev) return;
+  const nuevoEstado = aprobar ? 'aprobada' : 'rechazada';
+  if(!confirm('¿Marcar esta devolución como ' + nuevoEstado + '?')) return;
+  showLoading(true);
+  try {
+    await updateDoc(doc(db, 'devoluciones', dev.id), { estado: nuevoEstado, fechaResolucion: new Date().toISOString() });
+    if(aprobar && dev.productoId) {
+      try {
+        await runTransaction(db, async (tx) => {
+          const refP = doc(db, 'productos', dev.productoId);
+          const snapP = await tx.get(refP);
+          if(snapP.exists()) tx.update(refP, { stock: (snapP.data().stock || 0) + (dev.cantidad || 1) });
+        });
+      } catch(err) { console.error(err); }
+    }
+    agregarLogAuditoria('Devolución ' + nuevoEstado, `Solicitud ${dev.id.slice(-8)} — ${fmt(dev.monto || 0)}`);
+    toast('✅ Devolución ' + nuevoEstado);
+  } catch(err) { toast('Error: ' + err.message, 'err'); }
+  showLoading(false);
+});
+cargarDevolucionesAdmin();
+
+// --- IMPORTAR PRODUCTOS DESDE EXCEL / CSV ---
+let excelRowsCache = [];
+document.getElementById('excel-file-input')?.addEventListener('change', async function() {
+  const file = this.files && this.files[0];
+  if(!file) return;
+  showLoading(true);
+  try {
+    const buffer = await file.arrayBuffer();
+    const wb = XLSX.read(buffer, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    excelRowsCache = XLSX.utils.sheet_to_json(ws, { defval: '' }).map(raw => {
+      const r = {};
+      Object.keys(raw).forEach(k => { r[String(k).trim().toLowerCase()] = String(raw[k]).trim(); });
+      return r;
+    }).filter(r => r.nombre);
+    const prev = document.getElementById('import-preview');
+    if(prev) {
+      prev.classList.remove('hidden');
+      prev.innerHTML = '<p class="font-bold mb-2">📋 ' + excelRowsCache.length + ' productos detectados (vista previa, primeros 8):</p>'
+        + '<table class="text-xs w-full"><thead><tr class="border-b"><th class="border p-1">nombre</th><th class="border p-1">categoria</th><th class="border p-1">precioUnitario</th><th class="border p-1">stock</th></tr></thead><tbody>'
+        + excelRowsCache.slice(0, 8).map(r => '<tr><td class="border p-1">' + escapeHtml(r.nombre) + '</td><td class="border p-1">' + escapeHtml(r.categoria || '') + '</td><td class="border p-1">' + escapeHtml(r.preciounitario || '') + '</td><td class="border p-1">' + escapeHtml(r.stock || '') + '</td></tr>').join('')
+        + '</tbody></table>';
+    }
+    toast(excelRowsCache.length + ' productos listos para importar');
+  } catch(e) { toast('No se pudo leer el archivo: ' + e.message, 'err'); }
+  showLoading(false);
+});
+document.getElementById('btn-importar-excel')?.addEventListener('click', async () => {
+  if(!excelRowsCache.length) { toast('Primero selecciona el archivo Excel o CSV', 'warn'); return; }
+  const res = document.getElementById('import-result');
+  showLoading(true);
+  let ok = 0, fail = 0, i = 0;
+  for(const r of excelRowsCache) {
+    i++;
+    if(res) res.innerHTML = '⏳ Importando ' + i + ' de ' + excelRowsCache.length + '...';
+    try {
+      const precioUnitario = parseFloat(r.preciounitario) || 0;
+      if(!r.nombre || precioUnitario <= 0) { fail++; continue; }
+      const categoria = CATEGORIAS.includes(r.categoria) ? r.categoria : 'General';
+      const descuento = parseInt(r.descuento) || 0;
+      const imagenes = (r.imagenes || '').split(/[,;\n]/).map(s => s.trim()).filter(Boolean).slice(0, 30);
+      const skuFinal = await generarSkuBonu(categoria, r.nombre);
+      await addDoc(collection(db, 'productos'), {
+        nombre: r.nombre,
+        precioFinal: precioUnitario,
+        precioOriginal: Math.round(precioUnitario * (1 + descuento / 100) * 100) / 100,
+        precio6: parseFloat(r.precio6) || precioUnitario * 6,
+        precioProveedor: parseFloat(r.precioproveedor) || 0,
+        stock: parseInt(r.stock) || 0,
+        descuento,
+        categoria,
+        tipo: r.tipo || 'Ofertas',
+        proveedor: r.proveedor || 'Bonü',
+        costoEnvio: 0,
+        tasaIVA: 16,
+        cashbackEnabled: true,
+        descripcion: r.descripcion || '',
+        imagenes,
+        sku: skuFinal,
+        pdfUrl: null,
+        descargas: 0,
+        rating: 0,
+        reviewCount: 0,
+        fechaSubida: new Date().toISOString(),
+        vendedorId: currentUser?.uid || 'admin'
+      });
+      ok++;
+    } catch(err) { console.error(err); fail++; }
+  }
+  if(res) res.innerHTML = '<p class="font-bold text-green-600">✅ ' + ok + ' productos importados</p>' + (fail ? '<p class="text-red-500 text-sm">' + fail + ' filas con error (revisa que precioUnitario sea un número válido)</p>' : '');
+  agregarLogAuditoria('Importación de Excel', ok + ' productos importados, ' + fail + ' errores');
+  toast('✅ Importación terminada: ' + ok + ' productos');
+  excelRowsCache = [];
+  const fi = document.getElementById('excel-file-input'); if(fi) fi.value = '';
+  const pv = document.getElementById('import-preview'); if(pv) pv.classList.add('hidden');
+  await loadProducts();
+  cargarEditorAdmin();
+  cargarDashboard();
+  showLoading(false);
+});
+document.getElementById('descargar-plantilla')?.addEventListener('click', () => {
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['nombre','categoria','tipo','precioUnitario','precio6','precioProveedor','stock','descuento','proveedor','imagenes (opcional)'],
+    ['Producto Ejemplo','Ropa de hombre','Ofertas',500,2700,300,100,10,'Bonü','https://url-imagen-1,https://url-imagen-2']
+  ]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Plantilla');
+  XLSX.writeFile(wb, 'plantilla_productos_bonu.xlsx');
+  toast('Plantilla descargada');
+});
+
+// --- DASHBOARD: gráfica de ventas por período ---
+function _fechaLocal(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+async function actualizarChartPeriodo(dias) {
+  try {
+    const n = Math.max(1, parseInt(dias) || 30);
+    const snap = await getDocs(collection(db, 'pedidos'));
+    const hoy = new Date(); hoy.setHours(23, 59, 59, 999);
+    const desde = new Date(hoy); desde.setDate(desde.getDate() - (n - 1)); desde.setHours(0, 0, 0, 0);
+    const buckets = {};
+    for(let d = new Date(desde); d <= hoy; d.setDate(d.getDate() + 1)) buckets[_fechaLocal(d)] = 0;
+    snap.forEach(docu => {
+      const o = docu.data();
+      const f = new Date(o.fecha || 0);
+      if(f >= desde && f <= hoy) {
+        const k = _fechaLocal(f);
+        if(k in buckets) buckets[k] += o.total || 0;
+      }
+    });
+    const ctx = document.getElementById('ventas-chart')?.getContext('2d');
+    if(!ctx) return;
+    if(ventasChart) ventasChart.destroy();
+    ventasChart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: Object.keys(buckets).map(k => k.slice(5)), datasets: [{ label: 'Ventas', data: Object.values(buckets), borderColor: '#facc15', tension: 0.3, fill: true, backgroundColor: 'rgba(250,204,21,0.1)' }] },
+      options: { responsive: true, maintainAspectRatio: true, scales: { x: { ticks: { maxTicksLimit: 10 } } } }
+    });
+  } catch(e) { console.error(e); }
+}
+document.getElementById('ventas-periodo')?.addEventListener('change', function() { actualizarChartPeriodo(this.value); });
+document.querySelector('.admin-overlay')?.addEventListener('click', (e) => {
+  if(e.target.closest('.admin-nav-btn')?.dataset.tab === 'dashboard') {
+    const sel = document.getElementById('ventas-periodo');
+    if(sel) actualizarChartPeriodo(sel.value);
+  }
+});
+
+// --- EXPORTAR ÓRDENES A EXCEL ---
+document.getElementById('export-orders-excel')?.addEventListener('click', async () => {
+  showLoading(true);
+  try {
+    const snap = await getDocs(query(collection(db, 'pedidos'), orderBy('fecha', 'desc')));
+    const rows = [['ID', 'Cliente', 'Email', 'Total', 'Pasarela', 'Estado', 'Fecha', 'Artículos']];
+    snap.forEach(d => {
+      const o = d.data();
+      rows.push([d.id.slice(-8), o.usuario || '—', o.email || '—', o.total || 0, o.pasarela || '—', o.estado || '—', o.fecha ? new Date(o.fecha).toLocaleString('es-MX') : '—', (o.items || []).reduce((s, it) => s + (it.cantidad || 1), 0)]);
+    });
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Órdenes');
+    XLSX.writeFile(wb, 'ordenes_bonu_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    agregarLogAuditoria('Exportación de órdenes', snap.size + ' órdenes exportadas a Excel');
+    toast('✅ Excel de órdenes descargado');
+  } catch(e) { toast('Error: ' + e.message, 'err'); }
+  showLoading(false);
+});
+
+// --- EXPORTAR MÉTRICAS A EXCEL ---
+document.getElementById('export-metrics-excel')?.addEventListener('click', async () => {
+  showLoading(true);
+  try {
+    const pedSnap = await getDocs(collection(db, 'pedidos'));
+    const prodsSnap = await getDocs(collection(db, 'productos'));
+    const cliSnap = await getDocs(collection(db, 'clientes'));
+    let ventasTotales = 0, numOrdenes = 0;
+    const porEstado = {}, porPasarela = {}, porProducto = {};
+    pedSnap.forEach(d => {
+      const o = d.data();
+      ventasTotales += o.total || 0;
+      numOrdenes++;
+      const est = o.estado || 'sin estado';
+      porEstado[est] = (porEstado[est] || 0) + 1;
+      const pas = o.pasarela || 'otra';
+      porPasarela[pas] = (porPasarela[pas] || 0) + (o.total || 0);
+      (o.items || []).forEach(it => {
+        const k = it.nombre || it.id || 'Producto';
+        if(!porProducto[k]) porProducto[k] = { cantidad: 0, total: 0 };
+        porProducto[k].cantidad += it.cantidad || 1;
+        porProducto[k].total += (it.precio || 0) * (it.cantidad || 1);
+      });
+    });
+    const rows = [
+      ['MÉTRICAS BONÜ — ' + new Date().toLocaleString('es-MX')], [],
+      ['Ventas totales', ventasTotales],
+      ['Órdenes totales', numOrdenes],
+      ['Ticket promedio', numOrdenes ? Math.round((ventasTotales / numOrdenes) * 100) / 100 : 0],
+      ['Usuarios registrados', cliSnap.size],
+      ['Productos totales', prodsSnap.size], [],
+      ['Órdenes por estado'], ['Estado', 'Órdenes']
+    ];
+    Object.keys(porEstado).forEach(k => rows.push([k, porEstado[k]]));
+    rows.push([], ['Ventas por pasarela'], ['Pasarela', 'Monto']);
+    Object.keys(porPasarela).forEach(k => rows.push([k, porPasarela[k]]));
+    rows.push([], ['Top 20 productos vendidos'], ['Producto', 'Cantidad', 'Total']);
+    Object.entries(porProducto).sort((a, b) => b[1].total - a[1].total).slice(0, 20).forEach(([k, v]) => rows.push([k, v.cantidad, v.total]));
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Métricas');
+    XLSX.writeFile(wb, 'metricas_bonu_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    agregarLogAuditoria('Exportación de métricas', 'Métricas exportadas a Excel');
+    toast('✅ Excel de métricas descargado');
+  } catch(e) { toast('Error: ' + e.message, 'err'); }
+  showLoading(false);
 });
 
 console.log('✅ Control de Hero y Banner optimizado');
