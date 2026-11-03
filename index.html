@@ -3421,8 +3421,20 @@ async function agregarLogAuditoria(accion, detalle) {
 // HERO SLIDER
 // =====================================================================
 let heroSlides = [];
+// ===== HERO SLIDES — imagenes por defecto (se usan solo si Firestore no tiene slides) =====
+const HERO_SLIDES_DEFAULT = [
+  { imageUrl: 'https://i.ibb.co/wrPjbVN6/hero-celulares.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/2YMSF14R/hero-ropa-mujer.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/YBcw6LkR/hero-ropa-hombre.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/tMrZtyJx/hero-maquillaje.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/CpBStqJV/hero-plancha.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/xSDzpLCq/hero-bolsas.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/YBgHC88Y/hero-pantallas-tablets.jpg', duration: 5 },
+  { imageUrl: 'https://i.ibb.co/M5CS30hm/hero-relojes-joyeria.jpg', duration: 5 }
+];
 async function loadHeroSlides() {
   heroSlides = await loadHeroSlidesFromFirestore();
+  if(!heroSlides.length) heroSlides = HERO_SLIDES_DEFAULT.map(s => ({ ...s }));
   renderHeroSlidesPreview();
   injectHeroSlides();
 }
