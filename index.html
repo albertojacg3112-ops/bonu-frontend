@@ -3472,7 +3472,7 @@ function startHeroSlider() {
       current = (current + 1) % totalSlides;
       slides.forEach((s, i) => s.classList.toggle('active', i === current));
     }, 4000);
-  }, 60000);
+  }, 5000);
 }
 async function addHeroSlide(imageUrl, duration) {
   if(!imageUrl) return false;
