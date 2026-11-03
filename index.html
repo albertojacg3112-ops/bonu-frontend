@@ -5644,35 +5644,43 @@ document.getElementById('btn-subir-propio')?.addEventListener('click', function(
 // 🌐 IMPORTACIÓN REAL DE PROVEEDORES (AliExpress API real)
 document.getElementById('btn-importar-proveedor')?.addEventListener('click', async function() {
   const raw = document.getElementById('prov-sku')?.value.trim();
-  if (!raw) { toast('Pega la URL o el ID del producto de AliExpress', 'warn'); return; }
+  if (!raw) { toast('Pega la URL o el ID del producto (AliExpress o CJ)', 'warn'); return; }
+  /* Detecta origen: CJ (SKU tipo CJ1912201601 o URL cjdropshipping.com) vs AliExpress */
+  const esUrlCJ = raw.toLowerCase().includes('cjdropshipping');
+  const sinDominio = raw.replace(/cjdropshipping\.com/ig, '');
+  const mCJ = sinDominio.match(/cj-?[a-z0-9]{5,}/i);
+  const esCJ = esUrlCJ || !!mCJ;
   const esAli = raw.toLowerCase().includes('aliexpress') || /^\d{6,}$/.test(raw);
-  if (!esAli) { toast('Por ahora solo está conectado AliExpress. Pega una URL de producto de AliExpress (o su ID numérico).', 'warn'); return; }
+  if (esCJ && !mCJ) { toast('No pude extraer el SKU de CJ de esa URL. Pega el SKU (ej. CJ1912201601).', 'warn'); return; }
+  if (!esAli && !esCJ) { toast('Pega una URL/ID de AliExpress o un SKU de CJ (ej. CJ1912201601).', 'warn'); return; }
   showLoading(true);
   document.getElementById('import-loading').classList.remove('hidden');
   try {
     const idToken = await auth.currentUser?.getIdToken();
     if (!idToken) throw new Error('Sesión admin no encontrada. Vuelve a iniciar sesión.');
-    const response = await fetch(`${API_URL}/api/admin/aliexpress/producto?id=${encodeURIComponent(raw)}`, {
-      method: 'GET',
-      headers: { 'Authorization': 'Bearer ' + idToken }
-    });
-    // FIX: si el backend cae o responde HTML (502/429 de Render), response.json() explotaba
-    // con "Unexpected token <" — ahora el error dice el código HTTP real.
+    const response = esCJ
+      ? await fetch(`${API_URL}/api/cj/product/${encodeURIComponent(mCJ[0].toUpperCase())}`, { headers: { 'Authorization': 'Bearer ' + idToken } })
+      : await fetch(`${API_URL}/api/admin/aliexpress/producto?id=${encodeURIComponent(raw)}`, { headers: { 'Authorization': 'Bearer ' + idToken } });
     let data;
     try { data = await response.json(); }
     catch (_) { throw new Error(`El backend respondió HTTP ${response.status} sin JSON (revisa los logs del servidor)`); }
     if (!response.ok || !data.success) throw new Error(data.error || `Error del servidor (HTTP ${response.status})`);
-    const p = data.data;
+    let p;
+    if (esCJ) {
+      p = { nombre: data.product.name, descripcion: data.product.description, precio: data.product.price, stock: 100, imagenes: data.product.images || [] };
+    } else {
+      p = data.data;
+    }
     document.getElementById('p-nombre').value = p.nombre || '';
     document.getElementById('p-desc').value = String(p.descripcion || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2000);
     document.getElementById('p-precio-proveedor').value = p.precio || '';
     document.getElementById('p-stock').value = p.stock || '';
-    document.getElementById('p-proveedor').value = 'AliExpress';
+    document.getElementById('p-proveedor').value = esCJ ? 'CJ Dropshipping' : 'AliExpress';
     if (p.imagenes && p.imagenes.length) {
       imgUrlsPropio = p.imagenes.slice(0, 30);
       addImagenesPrevia(imgUrlsPropio, document.getElementById('prev-imgs-propio'));
     }
-    toast('✅ Importado de AliExpress. Define precio 1 pieza y precio 6, luego sube.');
+    toast(`✅ Importado de ${esCJ ? 'CJ Dropshipping' : 'AliExpress'}. Define precio 1 pieza y precio 6, luego sube.`);
   } catch (e) {
     toast('Error: ' + e.message, 'err');
     console.error(e);
