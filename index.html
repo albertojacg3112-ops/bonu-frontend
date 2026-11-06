@@ -398,6 +398,7 @@ button:active{transform:scale(0.97);}
           <div class="grid grid-cols-2 gap-3 mt-2"><input type="number" id="edit-precio-original" placeholder="Precio original" class="form-input text-sm"><input type="number" id="edit-stock" placeholder="Stock" class="form-input text-sm"></div>
           <div class="grid grid-cols-2 gap-2 mt-2"><select id="edit-categoria" class="form-input text-sm"><option value="">Categoría</option></select><select id="edit-seccion" class="form-input text-sm"><option value="Ofertas">Ofertas</option><option value="Promociones">Promociones</option><option value="Especiales">Especiales</option><option value="Top">Top</option><option value="Chic">Chic</option><option value="Galante">Galante</option><option value="Flash">Flash</option><option value="SuperBonü">SuperBonü</option></select></div>
           <div class="grid grid-cols-2 gap-2 mt-2"><input type="text" id="edit-proveedor" placeholder="Proveedor" class="form-input text-sm"><input type="number" id="edit-costo-envio" placeholder="Costo envío" class="form-input text-sm"></div>
+          <div class="grid grid-cols-2 gap-2 mt-2"><select id="edit-cashback-promo" class="form-input text-sm" title="Cashback que regalas en este producto (promo publicada)"><option value="5">Cashback 5% (base)</option></select><div></div></div>
           <div class="mt-2 flex items-center gap-4">
             <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="edit-cashback-enabled" checked> Cashback habilitado</label>
             <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="edit-envio-gratis"> Envío gratis</label>
@@ -495,7 +496,7 @@ button:active{transform:scale(0.97);}
 <div id="sellerBookPanel" class="seller-panel-overlay"><div class="seller-panel relative"><button class="close-modal-x" data-close="sellerBookPanel">&times;</button><div class="p-6"><div class="flex justify-between items-center mb-4 border-b pb-2"><h2 class="text-2xl font-bold">📘 Mi Panel de Vendedor</h2><div class="flex gap-2"><button id="seller-book-subir" class="bg-[#facc15] text-black px-3 py-1 rounded-full text-sm font-bold hover:bg-amber-400 transition">➕ Subir Producto</button><button id="seller-book-misprods" class="bg-gray-200 text-black px-3 py-1 rounded-full text-sm font-bold hover:bg-gray-300 transition">📦 Mis Productos</button><button id="seller-book-estadisticas" class="bg-gray-200 text-black px-3 py-1 rounded-full text-sm font-bold hover:bg-gray-300 transition">📊 Estadísticas</button><button id="seller-book-pagos" class="bg-gray-200 text-black px-3 py-1 rounded-full text-sm font-bold hover:bg-gray-300 transition">💰 Pagos y Facturación</button></div></div><div id="seller-book-content"></div></div></div></div>
 <div id="affiliatePanel" class="affiliate-panel-overlay"><div class="affiliate-panel relative"><button class="close-modal-x" data-close="affiliatePanel">&times;</button><div class="p-6"><div class="flex justify-between items-center mb-4 border-b pb-2"><h2 class="text-2xl font-bold">🤝 Panel de Afiliados</h2></div><div id="affiliate-content"></div></div></div></div>
 <div class="cart-panel-overlay" id="cart-overlay"><div class="cart-panel"><div class="flex justify-between p-5 bg-black text-white"><h2 class="font-bold"><i class="fa-solid fa-cart-shopping text-[#facc15] mr-2"></i>Mi Carrito</h2><button id="close-cart-btn" class="text-2xl hover:text-[#facc15] transition">&times;</button></div><div id="cart-items" class="flex-1 overflow-y-auto p-4"></div><div class="p-5 border-t"><button id="checkout-btn" class="w-full bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 transition">Realizar Compra</button></div></div></div>
-<div class="checkout-overlay" id="checkout-overlay"><div class="checkout-box relative"><button class="close-modal-x" data-close="checkout-overlay">&times;</button><div class="p-6"><h2 class="text-2xl font-bold text-center mb-6">Finalizar Compra</h2><div class="space-y-4"><input id="sh-name" placeholder="Nombre completo *" class="form-input"><input id="sh-email" type="email" placeholder="Correo electrónico *" class="form-input"><div class="flex gap-2"><select id="sh-phone-code" class="w-28 form-input"><option value="52">🇲🇽 +52 (México)</option><option value="1">🇺🇸 +1 (EE.UU)</option><option value="34">🇪🇸 +34 (España)</option><option value="44">🇬🇧 +44 (Reino Unido)</option><option value="49">🇩🇪 +49 (Alemania)</option><option value="33">🇫🇷 +33 (Francia)</option><option value="54">🇦🇷 +54 (Argentina)</option><option value="56">🇨🇱 +56 (Chile)</option><option value="57">🇨🇴 +57 (Colombia)</option><option value="51">🇵🇪 +51 (Perú)</option><option value="55">🇧🇷 +55 (Brasil)</option></select><input id="sh-phone" placeholder="Teléfono *" class="flex-1 form-input"></div><input id="sh-address" placeholder="Dirección completa *" class="form-input"><div class="grid grid-cols-2 gap-2"><div class="relative"><input id="sh-zip" placeholder="Código Postal *" class="form-input"></div><input id="sh-city" placeholder="Ciudad" class="form-input bg-gray-50" readonly></div><div class="grid grid-cols-2 gap-2"><input id="sh-state" placeholder="Estado" class="form-input bg-gray-50" readonly><input id="sh-country" placeholder="País" class="form-input bg-gray-50" readonly></div><div class="flex items-center gap-2"><input type="checkbox" id="same-billing"><label for="same-billing" class="text-sm">Usar los mismos datos para facturación</label></div><div id="billing-fields" class="hidden space-y-3"><input id="sh-rfc" placeholder="RFC / TAX / NIF / CIF" class="form-input"><input type="checkbox" id="require-invoice"><label for="require-invoice" class="text-sm ml-2">Solicitar Comprobante de compra</label></div><div class="cupon-input-container"><input type="text" id="cupon-code-input" placeholder="Código de descuento" class="form-input"><button id="aplicar-cupon-btn" class="bg-black text-white px-4 py-2 rounded-xl font-bold hover:bg-zinc-800 transition">Aplicar</button></div><div id="cupon-aplicado-info" class="cupon-aplicado" style="display:none;"><span id="cupon-desc-text"></span><button id="quitar-cupon-btn" class="text-red-600 text-xs font-bold hover:text-red-800 transition">❌ Quitar</button></div><div id="cashback-checkout-section" class="cashback-section" style="display:none;"><div class="flex justify-between items-center mb-2"><span class="font-bold">💰 Cashback disponible:</span><span id="cashback-available-display" class="text-green-700 font-bold">$0</span></div><input type="range" id="cashback-use-slider" class="cashback-slider" min="0" max="0" value="0" step="10"><div class="flex justify-between text-sm mt-1"><span>$0</span><span id="cashback-selected-display">$0</span><span id="cashback-max-display">$0</span></div><p class="text-xs text-gray-500 mt-2">✔️ Máximo 50% del total a pagar<br>✔️ Solo aplica en productos seleccionados</p></div><div class="bg-gray-50 rounded-xl p-4"><div id="checkout-items-list" class="space-y-2 mb-3"></div><div class="checkout-summary-row"><span>Subtotal:</span><span id="checkout-subtotal">$0</span></div><div id="checkout-shipping-row" class="checkout-summary-row text-sm text-gray-600"><span>Envío:</span><span id="checkout-shipping">$0</span></div><div id="checkout-tax-row" class="checkout-summary-row text-sm text-gray-600"><span>IVA (16%):</span><span id="checkout-tax">$0</span></div><div id="checkout-discount-row" class="checkout-summary-row text-sm text-green-600" style="display:none;"><span>Descuento cupón:</span><span id="checkout-discount">$0</span></div><div id="checkout-cashback-row" class="checkout-summary-row text-sm text-blue-600" style="display:none;"><span>Cashback aplicado:</span><span id="checkout-cashback">$0</span></div><div class="checkout-summary-row total pt-3 mt-3 border-t"><span>Total a pagar:</span><span id="checkout-total" class="text-green-700 font-bold">$0</span></div></div><div class="flex gap-2 flex-wrap"><button class="pay-method-tab active px-4 py-2 rounded-full border-2 border-[#facc15] bg-[#fef9c3] transition" data-m="bonupay">⚡ BonuPay</button><button class="pay-method-tab px-4 py-2 rounded-full border-2 border-gray-200 hover:border-[#facc15] transition" data-m="stripe">💳 Stripe</button><button class="pay-method-tab px-4 py-2 rounded-full border-2 border-gray-200 hover:border-[#facc15] transition" data-m="paypal">🅿️ PayPal</button><button class="pay-method-tab px-4 py-2 rounded-full border-2 border-gray-200 hover:border-[#facc15] transition" data-m="mercadopago">🟡 MercadoPago</button></div><button id="proceed-pay-btn" class="w-full bg-black text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-zinc-800 transition"><i class="fa-solid fa-cart-shopping"></i> Realizar Compra</button></div></div></div></div>
+<div class="checkout-overlay" id="checkout-overlay"><div class="checkout-box relative"><button class="close-modal-x" data-close="checkout-overlay">&times;</button><div class="p-6"><h2 class="text-2xl font-bold text-center mb-6">Finalizar Compra</h2><div class="space-y-4"><input id="sh-name" placeholder="Nombre completo *" class="form-input"><input id="sh-email" type="email" placeholder="Correo electrónico *" class="form-input"><div class="flex gap-2"><select id="sh-phone-code" class="w-28 form-input"><option value="52">🇲🇽 +52 (México)</option><option value="1">🇺🇸 +1 (EE.UU)</option><option value="34">🇪🇸 +34 (España)</option><option value="44">🇬🇧 +44 (Reino Unido)</option><option value="49">🇩🇪 +49 (Alemania)</option><option value="33">🇫🇷 +33 (Francia)</option><option value="54">🇦🇷 +54 (Argentina)</option><option value="56">🇨🇱 +56 (Chile)</option><option value="57">🇨🇴 +57 (Colombia)</option><option value="51">🇵🇪 +51 (Perú)</option><option value="55">🇧🇷 +55 (Brasil)</option></select><input id="sh-phone" placeholder="Teléfono *" class="flex-1 form-input"></div><input id="sh-address" placeholder="Dirección completa *" class="form-input"><div class="grid grid-cols-2 gap-2"><div class="relative"><input id="sh-zip" placeholder="Código Postal *" class="form-input"></div><input id="sh-city" placeholder="Ciudad" class="form-input bg-gray-50" readonly></div><div class="grid grid-cols-2 gap-2"><input id="sh-state" placeholder="Estado" class="form-input bg-gray-50" readonly><input id="sh-country" placeholder="País" class="form-input bg-gray-50" readonly></div><div class="flex items-center gap-2"><input type="checkbox" id="same-billing"><label for="same-billing" class="text-sm">Usar los mismos datos para facturación</label></div><div id="billing-fields" class="hidden space-y-3"><input id="sh-rfc" placeholder="RFC / TAX / NIF / CIF" class="form-input"><input type="checkbox" id="require-invoice"><label for="require-invoice" class="text-sm ml-2">Solicitar Comprobante de compra</label></div><div class="cupon-input-container"><input type="text" id="cupon-code-input" placeholder="Código de descuento" class="form-input"><button id="aplicar-cupon-btn" class="bg-black text-white px-4 py-2 rounded-xl font-bold hover:bg-zinc-800 transition">Aplicar</button></div><div id="cupon-aplicado-info" class="cupon-aplicado" style="display:none;"><span id="cupon-desc-text"></span><button id="quitar-cupon-btn" class="text-red-600 text-xs font-bold hover:text-red-800 transition">❌ Quitar</button></div><div id="cashback-checkout-section" class="cashback-section" style="display:none;"><div class="flex justify-between items-center mb-2"><span class="font-bold">💰 Cashback disponible:</span><span id="cashback-available-display" class="text-green-700 font-bold">$0</span></div><input type="range" id="cashback-use-slider" class="cashback-slider" min="0" max="0" value="0" step="10"><div class="flex justify-between text-sm mt-1"><span>$0</span><span id="cashback-selected-display">$0</span><span id="cashback-max-display">$0</span></div><p class="text-xs text-gray-500 mt-2">✔️ Máximo 50% del total a pagar<br>✔️ Solo aplica en productos seleccionados<br>🎁 Ganas <b>5%</b> en toda compra · <b>10%</b> si pasas de $45,000 con 6 piezas de cada producto · <b>15%</b> si pasas de $60,000 · hasta <b>20%</b> en productos seleccionados</p></div><div class="bg-gray-50 rounded-xl p-4"><div id="checkout-items-list" class="space-y-2 mb-3"></div><div class="checkout-summary-row"><span>Subtotal:</span><span id="checkout-subtotal">$0</span></div><div id="checkout-shipping-row" class="checkout-summary-row text-sm text-gray-600"><span>Envío:</span><span id="checkout-shipping">$0</span></div><div id="checkout-tax-row" class="checkout-summary-row text-sm text-gray-600"><span>IVA (16%):</span><span id="checkout-tax">$0</span></div><div id="checkout-discount-row" class="checkout-summary-row text-sm text-green-600" style="display:none;"><span>Descuento cupón:</span><span id="checkout-discount">$0</span></div><div id="checkout-cashback-row" class="checkout-summary-row text-sm text-blue-600" style="display:none;"><span>Cashback aplicado:</span><span id="checkout-cashback">$0</span></div><div class="checkout-summary-row total pt-3 mt-3 border-t"><span>Total a pagar:</span><span id="checkout-total" class="text-green-700 font-bold">$0</span></div><div id="cashback-ganar-hint" class="text-xs text-green-700 mt-2 font-semibold" style="display:none;"></div></div><div class="flex gap-2 flex-wrap"><button class="pay-method-tab active px-4 py-2 rounded-full border-2 border-[#facc15] bg-[#fef9c3] transition" data-m="bonupay">⚡ BonuPay</button><button class="pay-method-tab px-4 py-2 rounded-full border-2 border-gray-200 hover:border-[#facc15] transition" data-m="stripe">💳 Stripe</button><button class="pay-method-tab px-4 py-2 rounded-full border-2 border-gray-200 hover:border-[#facc15] transition" data-m="paypal">🅿️ PayPal</button><button class="pay-method-tab px-4 py-2 rounded-full border-2 border-gray-200 hover:border-[#facc15] transition" data-m="mercadopago">🟡 MercadoPago</button></div><button id="proceed-pay-btn" class="w-full bg-black text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-zinc-800 transition"><i class="fa-solid fa-cart-shopping"></i> Realizar Compra</button></div></div></div></div>
 <div class="pay-overlay" id="pay-overlay"><div class="pay-box relative"><button class="close-modal-x" data-close="pay-overlay">&times;</button><div class="p-6"><div class="bg-gray-100 rounded-xl p-3 mb-4 flex justify-between"><span class="text-gray-600">Total a pagar:</span><span id="pay-amount-show" class="text-xl font-bold text-green-700">$0</span></div><div id="card-form-section"><div class="space-y-3"><input id="card-number" placeholder="Número de tarjeta" class="card-field"><input id="card-name" placeholder="Nombre del titular" class="card-field"><div class="grid grid-cols-2 gap-3"><input id="card-expiry" placeholder="MM/AA" class="card-field"><input id="card-cvv" placeholder="CVV" class="card-field"></div></div><div id="stripe-element-wrap" class="hidden mb-3"><div id="stripe-card-el" class="card-field"></div></div><button id="pay-confirm-btn" class="w-full bg-green-500 text-white font-bold py-3 rounded-xl mt-4 hover:bg-green-600 transition">Confirmar pago</button></div><div id="paypal-section" class="hidden"><div id="paypal-buttons-container"></div></div></div></div></div>
 <!-- Login Admin -->
 <div id="login-modal" class="hidden fixed inset-0 bg-black/70 z-[9000] flex items-center justify-center p-4">
@@ -616,6 +617,23 @@ button:active{transform:scale(0.97);}
       </div>
       <!-- Productos -->
       <div id="tab-productos" class="admin-tab">
+        <!-- SAGA 4 · CALCULADORA DE PRECIOS AUTOMÁTICA -->
+        <div class="bg-white rounded-xl p-6 space-y-3 border-2 border-amber-300 mb-6">
+          <h2 class="text-xl font-bold mb-1">🧮 Calculadora de Precios Automática</h2>
+          <p class="text-xs text-gray-500">Pon el costo del proveedor y elige tu % de ganancia de la lista. El precio ya incluye el cashback que regalas (5% base, hasta 20% en promos), así tu ganancia queda intacta. Redondeo comercial: termina en .99.</p>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <input id="calc-costo" type="number" step="0.01" placeholder="Costo proveedor *" class="form-input">
+            <input id="calc-envio" type="number" step="0.01" placeholder="Envío (opcional)" class="form-input">
+            <select id="calc-margen" class="form-input"></select>
+            <select id="calc-cashback" class="form-input"></select>
+            <input id="calc-desc-mayoreo" type="number" step="1" value="10" placeholder="Desc. 6 pzs %" class="form-input">
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button id="btn-calc-calcular" class="bg-amber-400 text-black font-bold px-4 py-2 rounded-xl hover:bg-amber-300 transition">🧮 Calcular precio</button>
+            <button id="btn-guardar-margen-default" class="bg-black text-white font-bold px-4 py-2 rounded-xl hover:bg-zinc-800 transition">💾 Guardar margen por defecto</button>
+          </div>
+          <div id="calc-resultado" class="hidden"></div>
+        </div>
         <div class="bg-white rounded-xl p-6 space-y-4">
           <h2 class="text-xl font-bold mb-4">📦 Subir Producto</h2>
           <div class="flex gap-3 mb-3">
@@ -628,6 +646,10 @@ button:active{transform:scale(0.97);}
             <select id="p-seccion" class="form-input"><option value="Ofertas">Ofertas</option><option value="Promociones">Promociones</option><option value="Especiales">Especiales</option><option value="Top">Top</option><option value="Chic">Chic</option><option value="Galante">Galante</option><option value="Flash">Flash</option><option value="SuperBonü">SuperBonü</option></select>
             <div class="grid grid-cols-2 gap-3"><input id="p-precio-unitario" type="number" step="0.01" placeholder="Precio 1 pieza *" class="form-input"><input id="p-precio-6" type="number" step="0.01" placeholder="Precio 6 piezas *" class="form-input"></div>
             <div class="grid grid-cols-3 gap-3"><input id="p-precio-proveedor" type="number" placeholder="Precio proveedor *" class="form-input"><input id="p-stock" type="number" placeholder="Stock" class="form-input"><input id="p-descuento" type="number" placeholder="Descuento %" class="form-input"></div>
+            <div class="grid grid-cols-3 gap-3"><select id="p-margen" class="form-input" title="% de ganancia sobre el costo"></select><select id="p-cashback-promo" class="form-input" title="Cashback que regalas en este producto"></select><input id="p-desc-mayoreo-6" type="number" step="1" value="10" placeholder="Desc. mayoreo 6 pzs %" class="form-input"></div>
+            <button id="btn-calc-precio" type="button" class="bg-amber-400 text-black font-bold py-2 rounded-xl hover:bg-amber-300 transition text-sm">🧮 Calcular precio automático (llena los precios de arriba)</button>
+            <div id="calc-desglose" class="hidden text-xs bg-amber-50 border border-amber-200 rounded-xl p-3"></div>
+            <div id="tabla-margenes-import" class="hidden"></div>
             <div class="grid grid-cols-2 gap-3"><input id="p-costo-envio" type="number" placeholder="$ Costo de envío" class="form-input"><input id="p-tasa-iva" type="number" placeholder="Tasa IVA %" class="form-input" value="16"></div>
             <input id="p-proveedor" type="text" placeholder="Nombre del proveedor/vendedor" class="form-input" value="Bonü">
             <div class="flex items-center gap-4">
@@ -3683,7 +3705,11 @@ function openCheckout() {
   const country = document.getElementById('sh-country')?.value || 'México';
   const direccionCompleta = shippingAddress || `${customerName}, ${zip} ${city}, ${state}, ${country}`;
 
-  const itemsData = carrito.map(p => ({ id: p.id, cantidad: 1 }));
+  /* SAGA 4: agrupa unidades repetidas del mismo producto para que la cantidad real
+     llegue al checkout (necesario para el nivel de cashback de 6 piezas) */
+  const conteoCarrito = {};
+  carrito.forEach(p => { conteoCarrito[p.id] = (conteoCarrito[p.id] || 0) + 1; });
+  const itemsData = Object.entries(conteoCarrito).map(([id, cantidad]) => ({ id, cantidad }));
   const cuponCode = document.getElementById('cupon-code-input')?.value.trim() || null;
   const cashbackToUseInput = parseFloat(document.getElementById('cashback-selected-display')?.innerText?.replace(/[^0-9.]/g, '') || 0);
 
@@ -3772,6 +3798,15 @@ async function calcularTotalesCheckout() {
     const slider = document.getElementById('cashback-use-slider');
     if(slider) { slider.max = cashbackMaximo; slider.value = Math.min(cashbackToUse, cashbackMaximo); document.getElementById('cashback-selected-display').innerHTML = fmt(slider.value); slider.oninput = (e) => { cashbackToUse = parseInt(e.target.value); document.getElementById('cashback-selected-display').innerHTML = fmt(cashbackToUse); calcularTotalesCheckout(); }; }
   } else if(cashbackSection) cashbackSection.style.display = 'none';
+  /* SAGA 4: cashback estimado que gana el cliente con esta compra */
+  const hintGanar = document.getElementById('cashback-ganar-hint');
+  if (hintGanar) {
+    try {
+      const est = cashbackEstimadoUI();
+      if (est && est.monto > 0) { hintGanar.style.display = 'block'; hintGanar.innerHTML = `🎁 Con esta compra ganas <b>${fmt(est.monto)}</b> de cashback (${est.porcentaje}%${est.promoUsada ? ' · incluye promo de producto' : ''})`; }
+      else hintGanar.style.display = 'none';
+    } catch (_) { hintGanar.style.display = 'none'; }
+  }
 }
 
 // =====================================================================
@@ -4175,7 +4210,7 @@ window.openPP = async function(id) {
   const proveedorMostrar = (p.proveedor === 'CJ Dropshipping' || p.proveedor === 'TVCmall' || p.proveedor === 'SunSky' || p.proveedor === 'Yiwugo' || p.proveedor === 'Chinavasion') ? 'Bonü' : (p.proveedor || 'Bonü');
   document.getElementById('pp-proveedor').innerHTML = proveedorMostrar;
   document.getElementById('pp-tipo-badge').innerHTML = p.tipo || 'Ofertas';
-  document.getElementById('pp-price').innerHTML = fmt(p.precioFinal);
+  document.getElementById('pp-price').innerHTML = fmt(p.precioFinal) + ((p.cashbackPromo && p.cashbackPromo > 5) ? ` <span style="font-size:.72em;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:999px;font-weight:700;vertical-align:middle;">💰 Cashback ${p.cashbackPromo}%</span>` : '');
   document.getElementById('pp-original').innerHTML = p.precioOriginal ? fmt(p.precioOriginal) : '';
   const price6El = document.getElementById('pp-price-6');
   if(p.precio6) {
@@ -4259,6 +4294,8 @@ window.openPP = async function(id) {
     document.getElementById('edit-tasa-iva').value = p.tasaIVA || 16;
     document.getElementById('edit-descripcion').value = p.descripcion || '';
     document.getElementById('edit-cashback-enabled').checked = p.cashbackEnabled !== false;
+    const ecbp = document.getElementById('edit-cashback-promo');
+    if (ecbp) { llenarSelectsPrecios(); ecbp.value = String(p.cashbackPromo || 5); }
     const isFree = p.costoEnvio === 0;
     document.getElementById('edit-envio-gratis').checked = isFree;
     const inputEnvio = document.getElementById('edit-costo-envio');
@@ -5653,6 +5690,123 @@ document.getElementById('btn-subir-propio')?.addEventListener('click', function(
   document.getElementById('p-sku').value = '';
   toast('Modo: Producto propio');
 });
+// =====================================================================
+// SAGA 4 · MOTOR DE PRECIOS AUTOMÁTICO (espejo del backend)
+// Precio = (costo + envío) × (1 + margen%) / (1 − cashback%) → redondeo .99
+// Niveles de cashback: 5% base · 10% >$45,000 con 6 pzas c/u · 15% >$60,000
+// =====================================================================
+const LISTA_MARGENES_UI = [5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 120];
+const LISTA_CASHBACK_UI = [5, 7, 8, 10, 12, 15, 18, 20];
+const _fmtPrecio = (typeof fmt === 'function') ? fmt : (n => '$' + (Math.round((parseFloat(n) || 0) * 100) / 100).toFixed(2));
+function redondeo99UI(x) { if (!isFinite(x) || x <= 0) return 0; let p = Math.floor(x) + 0.99; if (p < x - 1e-9) p += 1; return Math.round(p * 100) / 100; }
+function calcPrecioLocal(costoTotal, margen, cashback, descMayoreo6) {
+  const c = Math.max(0, parseFloat(costoTotal) || 0);
+  const m = Math.max(0, parseFloat(margen) || 0);
+  const cb = Math.min(20, Math.max(0, parseFloat(cashback) || 5));
+  const dm = isFinite(descMayoreo6) && descMayoreo6 !== null && descMayoreo6 >= 0 && descMayoreo6 <= 50 ? descMayoreo6 : 10;
+  const precioUnitario = redondeo99UI(c * (1 + m / 100) / (1 - cb / 100));
+  const precio6 = redondeo99UI(precioUnitario * 6 * (1 - dm / 100));
+  const gananciaRealPorPieza = Math.round((precioUnitario * (1 - cb / 100) - c) * 100) / 100;
+  return { precioUnitario, precio6, gananciaRealPorPieza, margen: m, cashback: cb, descMayoreo6: dm };
+}
+function cashbackEstimadoUI() {
+  const subtotal = carrito.reduce((s, p) => s + p.precioFinal, 0);
+  const conteo = {};
+  carrito.forEach(p => { conteo[p.id] = (conteo[p.id] || 0) + 1; });
+  const todasQty6 = carrito.length > 0 && Object.values(conteo).every(q => q >= 6);
+  let pct = 5;
+  if (subtotal > 60000) pct = 15;
+  else if (subtotal > 45000 && todasQty6) pct = 10;
+  let monto = 0, promoUsada = false;
+  carrito.forEach(p => {
+    const promo = Math.min(20, parseInt(p.cashbackPromo) || 0);
+    if (promo > pct) promoUsada = true;
+    monto += p.precioFinal * Math.max(pct, promo) / 100;
+  });
+  return { porcentaje: pct, monto: Math.round(monto * 100) / 100, promoUsada };
+}
+function llenarSelectsPrecios() {
+  const selM1 = document.getElementById('p-margen'), selM2 = document.getElementById('calc-margen');
+  const selC1 = document.getElementById('p-cashback-promo'), selC2 = document.getElementById('calc-cashback'), selC3 = document.getElementById('edit-cashback-promo');
+  [selM1, selM2].forEach(s => { if (s && !s.options.length) s.innerHTML = LISTA_MARGENES_UI.map(m => `<option value="${m}">+${m}% de ganancia</option>`).join(''); });
+  [selC1, selC2, selC3].forEach(s => { if (s && !s.options.length) s.innerHTML = LISTA_CASHBACK_UI.map(c => `<option value="${c}">Cashback ${c}%${c === 5 ? ' (base)' : ''}</option>`).join(''); });
+  if (selM1 && !selM1.value) selM1.value = '40';
+  if (selM2 && !selM2.value) selM2.value = '40';
+  [selC1, selC2, selC3].forEach(s => { if (s && !s.value) s.value = '5'; });
+}
+llenarSelectsPrecios();
+function mostrarDesgloseCalc(calc, costo) {
+  const el = document.getElementById('calc-desglose');
+  if (!el || !calc) return;
+  const c = parseFloat(costo) || 0;
+  el.classList.remove('hidden');
+  el.innerHTML = `<b>🧮 Precio calculado:</b> ${_fmtPrecio(calc.precioUnitario)} por pieza · <b>${_fmtPrecio(calc.precio6)}</b> las 6 piezas (${_fmtPrecio(calc.precio6 / 6)} c/u)<br>Ganancia real después de regalar el ${calc.cashback}% de cashback: <b class="text-green-700">${_fmtPrecio(calc.gananciaRealPorPieza)}</b> por pieza · margen ${calc.margen}% sobre costo ${_fmtPrecio(c)}`;
+}
+function mostrarTablaMargenesImport(tabla, activo) {
+  const el = document.getElementById('tabla-margenes-import');
+  if (!el) return;
+  let filas = tabla;
+  if (!Array.isArray(filas) || !filas.length) {
+    const costo = parseFloat(document.getElementById('p-precio-proveedor')?.value) || 0;
+    const cb = parseInt(document.getElementById('p-cashback-promo')?.value) || 5;
+    const dmIn = parseFloat(document.getElementById('p-desc-mayoreo-6')?.value);
+    const dm = isFinite(dmIn) && dmIn >= 0 && dmIn <= 50 ? dmIn : 10;
+    filas = LISTA_MARGENES_UI.map(m => { const r = calcPrecioLocal(costo, m, cb, dm); return { margen: m, precioUnitario: r.precioUnitario, gananciaRealPorPieza: r.gananciaRealPorPieza }; });
+  }
+  el.classList.remove('hidden');
+  el.innerHTML = `<details class="mt-2"><summary class="text-xs font-bold text-purple-700 cursor-pointer">📊 Ver precio a todos los márgenes</summary><div class="grid grid-cols-2 sm:grid-cols-4 gap-1 mt-2 text-xs">${filas.map(f => `<div class="rounded-lg px-2 py-1 ${f.margen === activo ? 'bg-purple-600 text-white font-bold' : 'bg-gray-100'}" title="Ganancia real: ${_fmtPrecio(f.gananciaRealPorPieza)}">+${f.margen}% → ${_fmtPrecio(f.precioUnitario ?? f.precioFinal)}</div>`).join('')}</div></details>`;
+}
+document.getElementById('btn-calc-precio')?.addEventListener('click', function() {
+  const costo = parseFloat(document.getElementById('p-precio-proveedor')?.value);
+  if (!isFinite(costo) || costo <= 0) { toast('Primero pon el precio proveedor (o importa el producto)', 'warn'); return; }
+  const m = parseInt(document.getElementById('p-margen')?.value) || 40;
+  const cb = parseInt(document.getElementById('p-cashback-promo')?.value) || 5;
+  const dmIn = parseFloat(document.getElementById('p-desc-mayoreo-6')?.value);
+  const dm = isFinite(dmIn) && dmIn >= 0 && dmIn <= 50 ? dmIn : 10;
+  const calc = calcPrecioLocal(costo, m, cb, dm);
+  document.getElementById('p-precio-unitario').value = calc.precioUnitario;
+  document.getElementById('p-precio-6').value = calc.precio6;
+  mostrarDesgloseCalc(calc, costo);
+  mostrarTablaMargenesImport(null, m);
+  toast(`🧮 Precio: ${_fmtPrecio(calc.precioUnitario)} c/u · ganas ${_fmtPrecio(calc.gananciaRealPorPieza)} después del cashback`);
+});
+document.getElementById('btn-calc-calcular')?.addEventListener('click', function() {
+  const costo = parseFloat(document.getElementById('calc-costo')?.value);
+  if (!isFinite(costo) || costo <= 0) { toast('Escribe el costo del proveedor', 'warn'); return; }
+  const envio = parseFloat(document.getElementById('calc-envio')?.value) || 0;
+  const m = parseInt(document.getElementById('calc-margen')?.value) || 40;
+  const cb = parseInt(document.getElementById('calc-cashback')?.value) || 5;
+  const dmIn = parseFloat(document.getElementById('calc-desc-mayoreo')?.value);
+  const dm = isFinite(dmIn) && dmIn >= 0 && dmIn <= 50 ? dmIn : 10;
+  const calc = calcPrecioLocal(costo + envio, m, cb, dm);
+  const box = document.getElementById('calc-resultado');
+  if (!box) return;
+  box.classList.remove('hidden');
+  const neto = (costo + envio) * (1 + m / 100);
+  box.innerHTML = `
+    <div class="bg-amber-50 rounded-xl p-4 text-sm">
+      <p class="font-bold text-base">Precio de venta sugerido: <span class="text-green-700">${_fmtPrecio(calc.precioUnitario)}</span> por pieza</p>
+      <p class="mt-1">Paquete 6 piezas: <b>${_fmtPrecio(calc.precio6)}</b> (${_fmtPrecio(calc.precio6 / 6)} c/u)</p>
+      <p class="mt-1 text-gray-600">Desglose: costo ${_fmtPrecio(costo + envio)} + ganancia ${m}% (${_fmtPrecio((costo + envio) * m / 100)}) = neto ${_fmtPrecio(neto)} · el cliente recibe ${cb}% de cashback (${_fmtPrecio(calc.precioUnitario * cb / 100)})</p>
+      <p class="mt-1">✅ Tu ganancia real después del cashback: <b class="text-green-700">${_fmtPrecio(calc.gananciaRealPorPieza)}</b> por pieza</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1 mt-3 text-xs">${LISTA_MARGENES_UI.map(mm => { const r = calcPrecioLocal(costo + envio, mm, cb, dm); return `<button class="tabla-margen-btn rounded-lg px-2 py-1 text-left ${mm === m ? 'bg-purple-600 text-white font-bold' : 'bg-gray-100 hover:bg-amber-100'}" data-m="${mm}">+${mm}% → ${_fmtPrecio(r.precioUnitario)}</button>`; }).join('')}</div>`;
+  box.querySelectorAll('.tabla-margen-btn').forEach(b => b.addEventListener('click', () => { document.getElementById('calc-margen').value = b.dataset.m; document.getElementById('btn-calc-calcular').click(); }));
+});
+document.getElementById('btn-guardar-margen-default')?.addEventListener('click', async function() {
+  try {
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) throw new Error('Inicia sesión como admin');
+    const m = parseInt(document.getElementById('calc-margen')?.value) || 40;
+    const cb = parseInt(document.getElementById('calc-cashback')?.value) || 5;
+    const dmIn = parseFloat(document.getElementById('calc-desc-mayoreo')?.value);
+    const dm = isFinite(dmIn) && dmIn >= 0 && dmIn <= 50 ? dmIn : 10;
+    const r = await fetch(`${API_URL}/api/admin/precios/config`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken }, body: JSON.stringify({ margenDefault: m, cashbackDefault: cb, descMayoreo6: dm }) });
+    const d = await r.json();
+    if (!r.ok || !d.success) throw new Error(d.error || ('HTTP ' + r.status));
+    toast(`💾 Guardado: las importaciones nuevas usarán +${d.config.margenDefault}% y cashback ${d.config.cashbackDefault}%`);
+  } catch (e) { toast('Error: ' + e.message, 'err'); }
+});
 // 🌐 IMPORTACIÓN REAL DE PROVEEDORES (AliExpress API real)
 document.getElementById('btn-importar-proveedor')?.addEventListener('click', async function() {
   const raw = document.getElementById('prov-sku')?.value.trim();
@@ -5692,7 +5846,35 @@ document.getElementById('btn-importar-proveedor')?.addEventListener('click', asy
       imgUrlsPropio = p.imagenes.slice(0, 30);
       addImagenesPrevia(imgUrlsPropio, document.getElementById('prev-imgs-propio'));
     }
-    toast(`✅ Importado de ${esCJ ? 'CJ Dropshipping' : 'AliExpress'}. Define precio 1 pieza y precio 6, luego sube.`);
+    /* SAGA 4: precio de venta automático (margen + cashback configurados) */
+    llenarSelectsPrecios();
+    const sug = !esCJ ? data.preciosSugeridos : null;
+    const margenSel = document.getElementById('p-margen');
+    const cbSel = document.getElementById('p-cashback-promo');
+    const dmInput = document.getElementById('p-desc-mayoreo-6');
+    let calc = null;
+    if (sug && sug.precioUnitario) {
+      calc = { precioUnitario: sug.precioUnitario, precio6: sug.precio6, gananciaRealPorPieza: sug.gananciaRealPorPieza, margen: sug.margenUsado, cashback: sug.cashbackUsado };
+      if (margenSel) margenSel.value = String(sug.margenUsado);
+      if (cbSel) cbSel.value = String(sug.cashbackUsado);
+      if (dmInput) dmInput.value = sug.descMayoreo6;
+      mostrarTablaMargenesImport(sug.tablaMargenes, sug.margenUsado);
+    } else if (p.precio) {
+      const m = parseInt(margenSel?.value) || 40;
+      const cb = parseInt(cbSel?.value) || 5;
+      const dmIn = parseFloat(dmInput?.value);
+      const dm = isFinite(dmIn) && dmIn >= 0 && dmIn <= 50 ? dmIn : 10;
+      calc = calcPrecioLocal(p.precio, m, cb, dm);
+      mostrarTablaMargenesImport(null, m);
+    }
+    if (calc) {
+      document.getElementById('p-precio-unitario').value = calc.precioUnitario;
+      document.getElementById('p-precio-6').value = calc.precio6;
+      mostrarDesgloseCalc(calc, p.precio);
+      toast(`✅ Importado + precio automático: ${_fmtPrecio(calc.precioUnitario)} c/u · ${_fmtPrecio(calc.precio6)} las 6 piezas`);
+    } else {
+      toast(`✅ Importado de ${esCJ ? 'CJ Dropshipping' : 'AliExpress'}. Usa 🧮 Calcular precio automático.`);
+    }
   } catch (e) {
     toast('Error: ' + e.message, 'err');
     console.error(e);
@@ -5873,6 +6055,8 @@ document.getElementById('btn-submit-producto')?.addEventListener('click', async 
       tasaIVA,
       descripcion,
       cashbackEnabled,
+      margen: parseInt(document.getElementById('p-margen')?.value) || null,
+      cashbackPromo: parseInt(document.getElementById('p-cashback-promo')?.value) || 5,
       imagenes: imgUrlsPropio,
       medidas,
       tallas,
@@ -5961,6 +6145,7 @@ document.getElementById('save-product-changes')?.addEventListener('click', async
       tasaIVA: tasaIVA || 16,
       descripcion: descripcion || '',
       cashbackEnabled,
+      cashbackPromo: parseInt(document.getElementById('edit-cashback-promo')?.value) || 5,
       medidas,
       tallas,
       tamanos,
